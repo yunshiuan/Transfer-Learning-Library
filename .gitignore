@@ -133,3 +133,7 @@ examples/domain_adaptation/digits/logs/*
 examples/domain_adaptation/digits/data/*
 
 .vscode/
+
+**/__MACOSX/
+
+data/office31/

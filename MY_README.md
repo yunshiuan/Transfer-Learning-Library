@@ -8,3 +8,8 @@
 `pip install -r requirements.txt`
 
 `pip install timm`
+
+## other
+
+- to import from folder
+  - at the terminal: `export PYTHONPATH=.`
