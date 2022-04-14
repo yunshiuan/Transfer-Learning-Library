@@ -137,3 +137,5 @@ examples/domain_adaptation/digits/data/*
 **/__MACOSX/
 
 data/office31/
+
+*.DS_Store
