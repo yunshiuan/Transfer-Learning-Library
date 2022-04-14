@@ -12,7 +12,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.transforms as T
 
-# sys.path.append('..')
+sys.path.append('..')
 import tllib.vision.datasets as datasets
 import tllib.vision.models as models
 from tllib.vision.transforms import ResizeImage
