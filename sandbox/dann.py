@@ -212,6 +212,7 @@ if __name__ == '__main__':
     # Attemp to replicate this
     # - https://tl.thuml.ai/get_started/quickstart.html
     # - CUDA_VISIBLE_DEVICES=0 python dann.py data/office31 -d Office31 -s A -t W -a resnet50 --epochs 20 --seed 1 --log logs/dann/Office31_A2W
+    VERSION = "v1"
     parser = argparse.ArgumentParser(
         description='DANN for Unsupervised Domain Adaptation')
     # # dataset parameters
@@ -278,5 +279,6 @@ if __name__ == '__main__':
     parser.add_argument("--phase", type=str, default='train', choices=['train', 'test', 'analysis'],
                         help="When phase is 'test', only test the model."
                              "When phase is 'analysis', only analysis the model.")
+    parser.add_argument('--version', default=VERSION, type=int)                             
     args = parser.parse_args()
     main(args)
