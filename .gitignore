@@ -135,6 +135,8 @@ examples/domain_adaptation/digits/data/*
 .vscode/
 
 **/__MACOSX/
+**/checkpoints
+
 
 data/office31/
 sandbox/data/office31/
