@@ -8,3 +8,4 @@ webcolors
 matplotlib
 opencv-python
 numba
+timm
