@@ -4,6 +4,7 @@
 """
 import random
 import time
+from tkinter import ARC
 import warnings
 import sys
 import argparse
@@ -212,19 +213,29 @@ if __name__ == '__main__':
     # Attemp to replicate this
     # - https://tl.thuml.ai/get_started/quickstart.html
     # - CUDA_VISIBLE_DEVICES=0 python dann.py data/office31 -d Office31 -s A -t W -a resnet50 --epochs 20 --seed 1 --log logs/dann/Office31_A2W
-    VERSION = "v1"
-    PHASE = 'train'
-    
+    VERSION = "v2"
+    # PHASE = 'train'
+    PHASE = 'test'
+    ROOT = 'data/office31'
+    LOG = 'logs/dann/Office31_A2W'
+    DOMAIN_SOURCE = "A"
+    DOMAIN_TARGET = "W"
+    NUM_EPOCHS = 20
+    SEED = 1
+    ARCH = "res50"
+
     parser = argparse.ArgumentParser(
         description='DANN for Unsupervised Domain Adaptation')
     # # dataset parameters
     parser.add_argument('-root', metavar='DIR',
-                        help='root path of dataset', default='data/office31')
+                        help='root path of dataset', default=ROOT)
     parser.add_argument('-d', '--data', metavar='DATA', default='Office31', choices=utils.get_dataset_names(),
                         help='dataset: ' + ' | '.join(utils.get_dataset_names()) +
                              ' (default: Office31)')
-    parser.add_argument('-s', '--source', help='source domain(s)', nargs='+',default="A")
-    parser.add_argument('-t', '--target', help='target domain(s)', nargs='+',default="W")
+    parser.add_argument('-s', '--source', help='source domain(s)',
+                        nargs='+', default=DOMAIN_SOURCE)
+    parser.add_argument('-t', '--target', help='target domain(s)',
+                        nargs='+', default=DOMAIN_TARGET)
     parser.add_argument('--train-resizing', type=str, default='default')
     parser.add_argument('--val-resizing', type=str, default='default')
     parser.add_argument('--resize-size', type=int, default=224,
@@ -236,7 +247,7 @@ if __name__ == '__main__':
     parser.add_argument('--norm-std', type=float, nargs='+',
                         default=(0.229, 0.224, 0.225), help='normalization std')
     # model parameters
-    parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet18',
+    parser.add_argument('-a', '--arch', metavar='ARCH', default=ARC, #'resnet18',
                         choices=utils.get_model_names(),
                         help='backbone architecture: ' +
                              ' | '.join(utils.get_model_names()) +
@@ -266,21 +277,21 @@ if __name__ == '__main__':
                         dest='weight_decay')
     parser.add_argument('-j', '--workers', default=2, type=int, metavar='N',
                         help='number of data loading workers (default: 2)')
-    parser.add_argument('--epochs', default=20, type=int, metavar='N',
+    parser.add_argument('--epochs', default=NUM_EPOCHS, type=int, metavar='N',
                         help='number of total epochs to run')
     parser.add_argument('-i', '--iters-per-epoch', default=1000, type=int,
                         help='Number of iterations per epoch')
     parser.add_argument('-p', '--print-freq', default=100, type=int,
                         metavar='N', help='print frequency (default: 100)')
-    parser.add_argument('--seed', default=None, type=int,
+    parser.add_argument('--seed', default=SEED, type=int,
                         help='seed for initializing training. ')
     parser.add_argument('--per-class-eval', action='store_true',
                         help='whether output per-class accuracy during evaluation')
-    parser.add_argument("--log", type=str, default='dann',
+    parser.add_argument("--log", type=str, default=LOG,  # 'dann',
                         help="Where to save logs, checkpoints and debugging images.")
     parser.add_argument("--phase", type=str, default=PHASE, choices=['train', 'test', 'analysis'],
                         help="When phase is 'test', only test the model."
                              "When phase is 'analysis', only analysis the model.")
-    parser.add_argument('--version', default=VERSION, type=int)                             
+    parser.add_argument('--version', default=VERSION)
     args = parser.parse_args()
     main(args)
