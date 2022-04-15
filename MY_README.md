@@ -13,3 +13,8 @@
 
 - to import from folder
   - at the terminal: `export PYTHONPATH=.`
+
+# Sandbox
+
+- following:
+  - `https://tl.thuml.ai/get_started/quickstart.html`
