@@ -214,15 +214,15 @@ if __name__ == '__main__':
     # - https://tl.thuml.ai/get_started/quickstart.html
     # - CUDA_VISIBLE_DEVICES=0 python dann.py data/office31 -d Office31 -s A -t W -a resnet50 --epochs 20 --seed 1 --log logs/dann/Office31_A2W
     VERSION = "v2"
-    # PHASE = 'train'
-    PHASE = 'test'
+    PHASE = 'train'
+    # PHASE = 'test'
     ROOT = 'data/office31'
     LOG = 'logs/dann/Office31_A2W'
     DOMAIN_SOURCE = "A"
     DOMAIN_TARGET = "W"
     NUM_EPOCHS = 20
     SEED = 1
-    ARCH = "res50"
+    ARCH = "resnet50"
 
     parser = argparse.ArgumentParser(
         description='DANN for Unsupervised Domain Adaptation')
@@ -247,7 +247,7 @@ if __name__ == '__main__':
     parser.add_argument('--norm-std', type=float, nargs='+',
                         default=(0.229, 0.224, 0.225), help='normalization std')
     # model parameters
-    parser.add_argument('-a', '--arch', metavar='ARCH', default=ARC, #'resnet18',
+    parser.add_argument('-a', '--arch', metavar='ARCH', default=ARCH, #'resnet18',
                         choices=utils.get_model_names(),
                         help='backbone architecture: ' +
                              ' | '.join(utils.get_model_names()) +
