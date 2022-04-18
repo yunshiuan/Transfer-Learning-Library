@@ -51,6 +51,7 @@ class ForeverDataIterator:
             if self.device is not None:
                 data = send_to_device(data, self.device)
         except StopIteration:
+            # restart the iteration from the head
             self.iter = iter(self.data_loader)
             data = next(self.iter)
             if self.device is not None:

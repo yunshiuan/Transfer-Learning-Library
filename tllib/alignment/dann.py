@@ -109,6 +109,7 @@ class DomainAdversarialLoss(nn.Module):
 
 class ImageClassifier(ClassifierBase):
     def __init__(self, backbone: nn.Module, num_classes: int, bottleneck_dim: Optional[int] = 256, **kwargs):
+        # the layer after the feature extractor and is the input for both the label predictor and domain classifier
         bottleneck = nn.Sequential(
             # nn.AdaptiveAvgPool2d(output_size=(1, 1)),
             # nn.Flatten(),

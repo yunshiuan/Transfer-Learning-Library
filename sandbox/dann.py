@@ -45,10 +45,13 @@ def main(args: argparse.Namespace):
                       'which can slow down your training considerably! '
                       'You may see unexpected behavior when restarting '
                       'from checkpoints.')
-
+    # benchmark mode is good whenever your input sizes for your network do not vary. This way, cudnn will look for the optimal set of algorithms for that particular configuration (which takes some time). This usually leads to faster runtime. But if your input sizes changes at each iteration, then cudnn will benchmark every time a new size appears, possibly leading to worse runtime performances.
     cudnn.benchmark = True
-
+    
+    # ------------------
     # Data loading code
+    # - note that in this example, `val_dataset == test_dataset`
+    # ------------------
     train_transform = utils.get_train_transform(args.train_resizing, random_horizontal_flip=not args.no_hflip,
                                                 random_color_jitter=False, resize_size=args.resize_size,
                                                 norm_mean=args.norm_mean, norm_std=args.norm_std)
@@ -56,7 +59,7 @@ def main(args: argparse.Namespace):
                                             norm_mean=args.norm_mean, norm_std=args.norm_std)
     print("train_transform: ", train_transform)
     print("val_transform: ", val_transform)
-
+    
     train_source_dataset, train_target_dataset, val_dataset, test_dataset, num_classes, args.class_names = \
         utils.get_dataset(args.data, args.root, args.source,
                           args.target, train_transform, val_transform)
@@ -69,28 +72,98 @@ def main(args: argparse.Namespace):
     test_loader = DataLoader(
         test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
+    # A data iterator that will never stop producing data
     train_source_iter = ForeverDataIterator(train_source_loader)
     train_target_iter = ForeverDataIterator(train_target_loader)
 
-    # create model
+    # ------------------
+    # create the DANN model
+    # - classifier (ImageClassifier):
+    # -- backbone (feature extractor) -> pool_layer -> bottleneck -> (domain-invariant feature, dim = args.bottleneck_dim = 256) -> head (label predictor)
+    # --- backbone: 'resnet50': 
+    #   ---- input.shape = torch.Size([64, 3, 224, 224])
+    #   ---- output.shape: torch.Size([64, 2048, 7, 7])
+    #
+    # --- pool_layer: 
+    # Sequential(
+    #   (0): AdaptiveAvgPool2d(output_size=(1, 1))
+    #   (1): Flatten(start_dim=1, end_dim=-1)
+    # )
+    #   ---- input.shape = torch.Size([64, 2048, 7, 7])
+    #   ---- output.shape = torch.Size([64, 2048])
+    #
+    # --- bottleneck: 
+    #  Sequential(
+    #   (0): Linear(in_features=2048, out_features=256, bias=True)
+    #   (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    #   (2): ReLU()
+    # )
+    #   ---- input.shape = torch.Size([64, 2048])
+    #   ---- output.shape [the domain-invariant feature] = torch.Size([64, 256])
+    #
+    # --- head: 
+    #  Linear(in_features=256, out_features=31, bias=True)
+    #   ---- input.shape = torch.Size([64, 256])
+    #   ---- output.shape = torch.Size([64, 31]) # 31 = 31 object categories in three domains: Amazon, DSLR and Webcam
+    #
+    #
+    # - domain discri:
+    # DomainDiscriminator(
+    #   (0): Linear(in_features=256, out_features=1024, bias=True)
+    #   (1): BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    #   (2): ReLU()
+    #   (3): Linear(in_features=1024, out_features=1024, bias=True)
+    #   (4): BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    #   (5): ReLU()
+    #   (6): Sequential(
+    #         (0): Linear(in_features=1024, out_features=1, bias=True)
+    #       (1): Sigmoid()
+    #   )
+    # )     
+    #   -- input.shape = torch.Size([64, 256])
+    #   -- output.shape = torch.Size([64, 1])        
+    # ------------------
     print("=> using model '{}'".format(args.arch))
     backbone = utils.get_model(args.arch, pretrain=not args.scratch)
+    # - if no_pool=False, then the pooling layer is set to AdaptiveAvgPool2d() (see classifier.py)
     pool_layer = nn.Identity() if args.no_pool else None
+
+    # - args.bottleneck_dim = 256
     classifier = ImageClassifier(backbone, num_classes, bottleneck_dim=args.bottleneck_dim,
                                  pool_layer=pool_layer, finetune=not args.scratch).to(device)
     domain_discri = DomainDiscriminator(
         in_feature=classifier.features_dim, hidden_size=1024).to(device)
-
+    
+    # ------------------
     # define optimizer and lr scheduler
+    # ------------------
     optimizer = SGD(classifier.get_parameters() + domain_discri.get_parameters(),
                     args.lr, momentum=args.momentum, weight_decay=args.weight_decay, nesterov=True)
     lr_scheduler = LambdaLR(optimizer, lambda x:  args.lr *
                             (1. + args.lr_gamma * float(x)) ** (-args.lr_decay))
-
-    # define loss function
+    
+    # ------------------
+    # define the adversarial loss function
+    #
+    # DomainAdversarialLoss(
+    # (grl): WarmStartGradientReverseLayer()
+    # (domain_discriminator): DomainDiscriminator(
+    #     (0): Linear(in_features=256, out_features=1024, bias=True)
+    #     (1): BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    #     (2): ReLU()
+    #     (3): Linear(in_features=1024, out_features=1024, bias=True)
+    #     (4): BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    #     (5): ReLU()
+    #     (6): Sequential(
+    #     (0): Linear(in_features=1024, out_features=1, bias=True)
+    #     (1): Sigmoid()
+    #     )
+    # )
+    # )    
+    # ------------------
     domain_adv = DomainAdversarialLoss(domain_discri).to(device)
 
-    # resume from the best checkpoint
+    # is test or analysis phase: resume from the best checkpoint
     if args.phase != 'train':
         checkpoint = torch.load(
             logger.get_checkpoint_path('best'), map_location='cpu')
@@ -124,11 +197,17 @@ def main(args: argparse.Namespace):
     best_acc1 = 0.
     for epoch in range(args.epochs):
         print("lr:", lr_scheduler.get_last_lr()[0])
+        
+        # ------------------
         # train for one epoch
+        # ------------------
         train(train_source_iter, train_target_iter, classifier, domain_adv, optimizer,
               lr_scheduler, epoch, args)
 
-        # evaluate on validation set
+        # ------------------
+        # evaluate on the validation set
+        # ------------------
+        # - the validation accuracy
         acc1 = utils.validate(val_loader, classifier, args, device)
 
         # remember best acc@1 and save checkpoint
@@ -152,6 +231,9 @@ def main(args: argparse.Namespace):
 def train(train_source_iter: ForeverDataIterator, train_target_iter: ForeverDataIterator,
           model: ImageClassifier, domain_adv: DomainAdversarialLoss, optimizer: SGD,
           lr_scheduler: LambdaLR, epoch: int, args: argparse.Namespace):
+    # ------------------
+    # Meters for compute and store the average and current value.
+    # ------------------
     batch_time = AverageMeter('Time', ':5.2f')
     data_time = AverageMeter('Data', ':5.2f')
     losses = AverageMeter('Loss', ':6.2f')
@@ -167,7 +249,22 @@ def train(train_source_iter: ForeverDataIterator, train_target_iter: ForeverData
     domain_adv.train()
 
     end = time.time()
+
+    # ------------------
+    # iterate all the instances within the epoch
+    # ------------------
     for i in range(args.iters_per_epoch):
+
+        # ------------------
+        # get the data ((x_s,label_s),x_t)
+        #
+        # x_s: the intput features of the source domain
+        #   - shape = torch.Size([32, 3, 224, 224]) # batch_size, # channels, h, w
+        # label_s: the input labels of the source domain
+        #   - shape = 32
+        # x_t: the intput features of the target domain
+        #   - shape: torch.Size([32, 3, 224, 224])
+        # ------------------        
         x_s, labels_s = next(train_source_iter)[:2]
         x_t, = next(train_target_iter)[:1]
 
@@ -177,31 +274,60 @@ def train(train_source_iter: ForeverDataIterator, train_target_iter: ForeverData
 
         # measure data loading time
         data_time.update(time.time() - end)
-
-        # compute output
+        
+        # ------------------        
+        # feedforward: compute output
+        # - concatenate the inputs from the source and the target domain only for convenience
+        # -- treating them as separate batches
+        # ------------------        
+        # x = (x_s, s_t)
+        # - x.shape = torch.Size([64, 3, 224, 224])
         x = torch.cat((x_s, x_t), dim=0)
+
+        # y = y_hat = (y_hat_s, y_hat_t) 
+        # - y.shape = torch.Size([64, 31]), 31 =  # classes
+        # f = the domain-invariant feature
+        # - f.shape = torch.Size([64, 256])
         y, f = model(x)
+
+        # split y_hat and f back to source and target domain
         y_s, y_t = y.chunk(2, dim=0)
         f_s, f_t = f.chunk(2, dim=0)
 
+        # ------------------        
+        # compute the loss
+        # - total loss = classification loss + domain adversarial loss
+        # -- classification loss = cross entropy loss of (source y_hat, source y_ground_truth)
+        # -- domain adversarial loss = the domain adversarial loss between (f_s, f_t)
+        # ------------------        
+        # - classification loss
         cls_loss = F.cross_entropy(y_s, labels_s)
+        # - domain adversarial loss
         transfer_loss = domain_adv(f_s, f_t)
         domain_acc = domain_adv.domain_discriminator_accuracy
+        # args.trade_off = the relative weight of the domain adversarial loss with respect to the classification loss
         loss = cls_loss + transfer_loss * args.trade_off
 
         cls_acc = accuracy(y_s, labels_s)[0]
-
+        
+        # ------------------        
+        # update the averahe loss, classication acc, domain accuracy 
+        # - for domain accuracy, the closer it's to the 'random rate', the better it is
+        # ------------------        
         losses.update(loss.item(), x_s.size(0))
         cls_accs.update(cls_acc.item(), x_s.size(0))
         domain_accs.update(domain_acc.item(), x_s.size(0))
-
-        # compute gradient and do SGD step
+        
+        # ------------------        
+        # back-propagation
+        # - compute gradient and do the SGD step
+        # ------------------                
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         lr_scheduler.step()
 
-        # measure elapsed time
+        # measure the elapsed time
         batch_time.update(time.time() - end)
         end = time.time()
 
@@ -257,9 +383,9 @@ if __name__ == '__main__':
     parser.add_argument('--no-pool', action='store_true',
                         help='no pool layer after the feature extractor.')
     parser.add_argument('--scratch', action='store_true',
-                        help='whether train from scratch.')
+                        help='whether train from scratch (use the pretrained otherwise).')
     parser.add_argument('--trade-off', default=1., type=float,
-                        help='the trade-off hyper-parameter for transfer loss')
+                        help='the trade-off hyper-parameter for transfer loss (the relative weight of the domain adversarial loss with respect to the classification loss')
     # training parameters
     parser.add_argument('-b', '--batch-size', default=32, type=int,
                         metavar='N',

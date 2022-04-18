@@ -77,9 +77,18 @@ class Classifier(nn.Module):
 
     def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """"""
+        # backbone (feature extractor) -> pooling -> bottleneck -> (domain-invariant feature) -> head (label predictor)
+
+        # - x.shape = torch.Size([64, 3, 224, 224])
+        # - self.backbone(x).shape = torch.Size([64, 2048, 7, 7])
+        # - f.shape = torch.Size([64, 2048])
         f = self.pool_layer(self.backbone(x))
+
+        # - f.shape: torch.Size([64, 256])
         f = self.bottleneck(f)
+        # - predictions.shape: torch.Size([64, 31])
         predictions = self.head(f)
+        
         if self.training:
             return predictions, f
         else:
@@ -99,4 +108,5 @@ class Classifier(nn.Module):
 
 
 class ImageClassifier(Classifier):
+    # implemented in `tllib/alignment/dann.py`
     pass

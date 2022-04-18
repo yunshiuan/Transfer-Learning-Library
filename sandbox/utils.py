@@ -12,7 +12,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.transforms as T
 
-sys.path.append('..')
+# add the directory of the repo to allow importing 'tllib'
+sys.path.append('.') # for interactive shell mode
+sys.path.append('..') # console mode
 import tllib.vision.datasets as datasets
 import tllib.vision.models as models
 from tllib.vision.transforms import ResizeImage
