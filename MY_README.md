@@ -31,3 +31,5 @@
 ## TODO
 
 - evaluate on both the source and the target domain. Currently, the model is only evaluated on the target domain. I should partition the source domain into train and test, and also partition the target domain into train and test. I would like to know if the DANN performs equally well on both the source test set and the target test set.
+
+- apply the DANN model to the stance detection dataset.
