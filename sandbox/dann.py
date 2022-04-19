@@ -50,7 +50,7 @@ def main(args: argparse.Namespace):
     
     # ------------------
     # Data loading code
-    # - note that in this example, `val_dataset == test_dataset`
+    # - in this example, validation dataset == test dataset == train-target dataset == 'data/office31/image_list/webcam.txt'
     # ------------------
     train_transform = utils.get_train_transform(args.train_resizing, random_horizontal_flip=not args.no_hflip,
                                                 random_color_jitter=False, resize_size=args.resize_size,
