@@ -35,6 +35,8 @@ class AverageMeter(object):
 
     def __str__(self):
         fmtstr = '{name} {val' + self.fmt + '} ({avg' + self.fmt + '})'
+        # e.g., 'Time  1.680 ( 1.680)' 
+        # - the current value and the average so far within this epoch
         return fmtstr.format(**self.__dict__)
 
 
@@ -85,8 +87,10 @@ class ProgressMeter(object):
         self.meters = meters
         self.prefix = prefix
 
-    def display(self, batch):
+    def display(self, batch):        
+        # 'Test: [ 0/25]'
         entries = [self.prefix + self.batch_fmtstr.format(batch)]
+        # ['Test: [ 0/25]', 'Time  1.680 ( 1.680)', 'Loss 2.8600e+00 (2.8600e+00)', 'Acc@1  78.12 ( 78.12)']
         entries += [str(meter) for meter in self.meters]
         print('\t'.join(entries))
 

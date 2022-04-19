@@ -69,15 +69,23 @@ class DomainAdversarialLoss(nn.Module):
 
     def forward(self, f_s: torch.Tensor, f_t: torch.Tensor,
                 w_s: Optional[torch.Tensor] = None, w_t: Optional[torch.Tensor] = None) -> torch.Tensor:
-        f = self.grl(torch.cat((f_s, f_t), dim=0))
-        d = self.domain_discriminator(f)
+        # the gradient reversal layer                
+        f = self.grl(torch.cat((f_s, f_t), dim=0)) 
+        
+        # -------------------------------
+        # the predicted domain d_hat
+        # - d.shape = torch.Size([64, 1])
+        # -------------------------------        
+        d = self.domain_discriminator(f)        
         if self.sigmoid:
+            # -------------------------------                    
+            # get the average domain classification accuracy
+            # -------------------------------                    
             d_s, d_t = d.chunk(2, dim=0)
             d_label_s = torch.ones((f_s.size(0), 1)).to(f_s.device)
             d_label_t = torch.zeros((f_t.size(0), 1)).to(f_t.device)
             self.domain_discriminator_accuracy = 0.5 * (
                         binary_accuracy(d_s, d_label_s) + binary_accuracy(d_t, d_label_t))
-
             if w_s is None:
                 w_s = torch.ones_like(d_label_s)
             if w_t is None:

@@ -94,11 +94,13 @@ def validate(val_loader, model, args, device) -> float:
     top1 = AverageMeter('Acc@1', ':6.2f')
     progress = ProgressMeter(
         len(val_loader),
+        # the three metrics to keep track of
         [batch_time, losses, top1],
         prefix='Test: ')
 
     # switch to evaluate mode
     model.eval()
+    # - whether output per-class accuracy during evaluation
     if args.per_class_eval:
         confmat = ConfusionMatrix(len(args.class_names))
     else:
@@ -115,7 +117,7 @@ def validate(val_loader, model, args, device) -> float:
             output = model(images)
             loss = F.cross_entropy(output, target)
 
-            # measure accuracy and record loss
+            # measure top-1 accuracy and record loss
             acc1, = accuracy(output, target, topk=(1,))
             if confmat:
                 confmat.update(target, output.argmax(1))
@@ -127,8 +129,13 @@ def validate(val_loader, model, args, device) -> float:
             end = time.time()
 
             if i % args.print_freq == 0:
+                # Test: [ 0/25]   Time  1.528 ( 1.528)    Loss 2.8658e+00 (2.8658e+00)    Acc@1  71.88 ( 71.88)
+                # -- the accruacy so far
                 progress.display(i)
-
+        # ------------------    
+        # print the overall top-1 accuracy
+        # - * Acc@1 80.629
+        # ------------------
         print(' * Acc@1 {top1.avg:.3f}'.format(top1=top1))
         if confmat:
             print(confmat.format(args.class_names))

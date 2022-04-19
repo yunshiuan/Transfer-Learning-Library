@@ -196,10 +196,14 @@ def main(args: argparse.Namespace):
     # start training
     best_acc1 = 0.
     for epoch in range(args.epochs):
+        # ------------------
+        # the learning rate at the start of this epoch
+        # - lr decays throughout the time
+        # ------------------
         print("lr:", lr_scheduler.get_last_lr()[0])
         
         # ------------------
-        # train for one epoch
+        # train for one epoch (for each epoch, train for `iters-per-epoch` iterations)
         # ------------------
         train(train_source_iter, train_target_iter, classifier, domain_adv, optimizer,
               lr_scheduler, epoch, args)
@@ -207,7 +211,9 @@ def main(args: argparse.Namespace):
         # ------------------
         # evaluate on the validation set
         # ------------------
-        # - the validation accuracy
+        # - the validation top-1 accuracy on label prediction
+        # -- val_loader: the DataLoader for the val set
+        # -- classifier: the main classifier with the label predictor at the end
         acc1 = utils.validate(val_loader, classifier, args, device)
 
         # remember best acc@1 and save checkpoint
@@ -220,7 +226,10 @@ def main(args: argparse.Namespace):
 
     print("best_acc1 = {:3.1f}".format(best_acc1))
 
+    # ------------------
     # evaluate on test set
+    # - using the best model so far
+    # ------------------
     classifier.load_state_dict(torch.load(logger.get_checkpoint_path('best')))
     acc1 = utils.validate(test_loader, classifier, args, device)
     print("test_acc1 = {:3.1f}".format(acc1))
@@ -331,6 +340,11 @@ def train(train_source_iter: ForeverDataIterator, train_target_iter: ForeverData
         batch_time.update(time.time() - end)
         end = time.time()
 
+        # ------------------                
+        # print the acc and loss at this time
+        # - e.g., Epoch: [17][ 900/1000]	Time  0.38 ( 0.38)	Data  0.11 ( 0.12)	Loss   0.76 (  0.75)	Cls Acc 100.0 (98.4)	Domain Acc 56.2 (56.4)
+        # -- value of this iteration (average so far within this epoch)
+        # ------------------                
         if i % args.print_freq == 0:
             progress.display(i)
 
@@ -349,6 +363,7 @@ if __name__ == '__main__':
     NUM_EPOCHS = 20
     SEED = 1
     ARCH = "resnet50"
+    ITERS_PER_EPOCH = 10
 
     parser = argparse.ArgumentParser(
         description='DANN for Unsupervised Domain Adaptation')
@@ -405,7 +420,7 @@ if __name__ == '__main__':
                         help='number of data loading workers (default: 2)')
     parser.add_argument('--epochs', default=NUM_EPOCHS, type=int, metavar='N',
                         help='number of total epochs to run')
-    parser.add_argument('-i', '--iters-per-epoch', default=1000, type=int,
+    parser.add_argument('-i', '--iters-per-epoch', default=ITERS_PER_EPOCH, type=int,
                         help='Number of iterations per epoch')
     parser.add_argument('-p', '--print-freq', default=100, type=int,
                         metavar='N', help='print frequency (default: 100)')
