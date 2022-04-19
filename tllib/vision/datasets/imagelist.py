@@ -37,7 +37,9 @@ class ImageList(datasets.VisionDataset):
     def __init__(self, root: str, classes: List[str], data_list_file: str,
                  transform: Optional[Callable] = None, target_transform: Optional[Callable] = None):
         super().__init__(root, transform=transform, target_transform=target_transform)
+        # the list of the file name of the images
         self.samples = self.parse_data_file(data_list_file)
+        # the list of the labels
         self.targets = [s[1] for s in self.samples]
         self.classes = classes
         self.class_to_idx = {cls: idx
@@ -51,12 +53,29 @@ class ImageList(datasets.VisionDataset):
             index (int): Index
             return (tuple): (image, target) where target is index of the target class.
         """
+        # (file name of the image, class label)
         path, target = self.samples[index]
+        # load the image tensor from the file name
+        # - <PIL.Image.Image image mode=RGB size=300x300 at 0x7F0A69190340>
         img = self.loader(path)
         if self.transform is not None:
+            # convert to tensor as well as applying image transformations
+            # e.g., 
+            # Compose(
+            #     Compose(
+            #     ResizeImage(size=(256, 256))
+            #     RandomResizedCrop(size=(224, 224), scale=(0.08, 1.0), ratio=(0.75, 1.3333), interpolation=PIL.Image.BILINEAR)
+            # )
+            #     RandomHorizontalFlip(p=0.5)
+            #     ToTensor()
+            #     Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+            # )
             img = self.transform(img)
         if self.target_transform is not None and target is not None:
             target = self.target_transform(target)
+        
+        # img.shape
+        # - torch.Size([3, 224, 224])            
         return img, target
 
     def __len__(self) -> int:
@@ -136,6 +155,7 @@ class MultipleDomainsDataset(Dataset[T_co]):
             sample_idx = idx
         else:
             sample_idx = idx - self.cumulative_sizes[dataset_idx - 1]
+        # (image tensor, class label, domain id)
         return self.domains[dataset_idx][sample_idx] + (self.domain_ids[dataset_idx],)
 
     @property

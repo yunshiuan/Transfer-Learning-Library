@@ -53,6 +53,7 @@ class Office31(ImageList):
 
     def __init__(self, root: str, task: str, download: Optional[bool] = True, **kwargs):
         assert task in self.image_list
+        # e.g., 'data/office31/image_list/amazon.txt'
         data_list_file = os.path.join(root, self.image_list[task])
 
         if download:

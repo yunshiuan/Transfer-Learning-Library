@@ -241,6 +241,7 @@ def main(args: argparse.Namespace):
         best_acc1 = max(acc1, best_acc1)
 
     print("best_acc1 = {:3.1f}".format(best_acc1))
+    
     # ------------------
     # evaluate on test set
     # - in this example, validation dataset == test dataset == train-target dataset == 'data/office31/image_list/webcam.txt'
@@ -290,7 +291,9 @@ def train(train_source_iter: ForeverDataIterator, train_target_iter: ForeverData
         # x_t: the intput features of the target domain
         #   - shape: torch.Size([32, 3, 224, 224])
         # ------------------
-        x_s, labels_s = next(train_source_iter)[:2]
+        # get the features and the labels in the source domain
+        x_s, labels_s = next(train_source_iter)[:2] 
+        # get the features in the target domain        
         x_t, = next(train_target_iter)[:1]
 
         x_s = x_s.to(device)
@@ -370,9 +373,9 @@ if __name__ == '__main__':
     # - https://tl.thuml.ai/get_started/quickstart.html
     # - CUDA_VISIBLE_DEVICES=0 python dann.py data/office31 -d Office31 -s A -t W -a resnet50 --epochs 20 --seed 1 --log logs/dann/Office31_A2W
     VERSION = "v2"
-    # PHASE = 'train'
+    PHASE = 'train'
     # PHASE = 'test'
-    PHASE = 'analysis'
+    # PHASE = 'analysis'
     ROOT = 'data/office31'
     LOG = 'logs/dann/Office31_A2W'
     # self.image_list
