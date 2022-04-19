@@ -197,9 +197,13 @@ def main(args: argparse.Namespace):
         return
 
     if args.phase == 'test':
+        # ------------------
+        # evaluate on the test set
+        # ------------------
         acc1 = utils.validate(test_loader, classifier, args, device)
         print(acc1)
         return
+
     # ------------------
     # start training
     # ------------------
