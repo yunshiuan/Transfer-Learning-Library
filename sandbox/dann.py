@@ -63,12 +63,20 @@ def main(args: argparse.Namespace):
     train_source_dataset, train_target_dataset, val_dataset, test_dataset, num_classes, args.class_names = \
         utils.get_dataset(args.data, args.root, args.source,
                           args.target, train_transform, val_transform)
+    # train-source: 'data/office31/image_list/amazon.txt'
+    # - len = 2817                          
     train_source_loader = DataLoader(train_source_dataset, batch_size=args.batch_size,
                                      shuffle=True, num_workers=args.workers, drop_last=True)
+    # train-target: 'data/office31/image_list/webcam.txt'
+    # - len = 795                                     
     train_target_loader = DataLoader(train_target_dataset, batch_size=args.batch_size,
                                      shuffle=True, num_workers=args.workers, drop_last=True)
+    # val-target: 'data/office31/image_list/webcam.txt'
+    # - len = 795    
     val_loader = DataLoader(
         val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
+    # test-target: 'data/office31/image_list/webcam.txt'
+    # - len = 795           
     test_loader = DataLoader(
         test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
@@ -192,8 +200,9 @@ def main(args: argparse.Namespace):
         acc1 = utils.validate(test_loader, classifier, args, device)
         print(acc1)
         return
-
+    # ------------------
     # start training
+    # ------------------
     best_acc1 = 0.
     for epoch in range(args.epochs):
         # ------------------
@@ -210,6 +219,8 @@ def main(args: argparse.Namespace):
 
         # ------------------
         # evaluate on the validation set
+        # - in this example, validation dataset == test dataset == train-target dataset == 'data/office31/image_list/webcam.txt'
+        # - len = 795
         # ------------------
         # - the validation top-1 accuracy on label prediction
         # -- val_loader: the DataLoader for the val set
@@ -225,9 +236,9 @@ def main(args: argparse.Namespace):
         best_acc1 = max(acc1, best_acc1)
 
     print("best_acc1 = {:3.1f}".format(best_acc1))
-
     # ------------------
     # evaluate on test set
+    # - in this example, validation dataset == test dataset == train-target dataset == 'data/office31/image_list/webcam.txt'
     # - using the best model so far
     # ------------------
     classifier.load_state_dict(torch.load(logger.get_checkpoint_path('best')))
@@ -358,8 +369,10 @@ if __name__ == '__main__':
     # PHASE = 'test'
     ROOT = 'data/office31'
     LOG = 'logs/dann/Office31_A2W'
-    DOMAIN_SOURCE = "A"
-    DOMAIN_TARGET = "W"
+    # self.image_list
+    # - {'A': 'image_list/amazon.txt', 'D': 'image_list/dslr.txt', 'W': 'image_list/webcam.txt'}
+    DOMAIN_SOURCE = "A" # 'image_list/amazon.txt'
+    DOMAIN_TARGET = "W" # 'image_list/webcam.txt'
     NUM_EPOCHS = 20
     SEED = 1
     ARCH = "resnet50"

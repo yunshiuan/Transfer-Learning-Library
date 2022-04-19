@@ -73,13 +73,23 @@ def get_dataset(dataset_name, root, source, target, train_source_transform, val_
         def concat_dataset(tasks, start_idx, **kwargs):
             # return ConcatDataset([dataset(task=task, **kwargs) for task in tasks])
             return MultipleDomainsDataset([dataset(task=task, **kwargs) for task in tasks], tasks, domain_ids=list(range(start_idx, start_idx+len(tasks))))
-
+        
+        # train-source: 'data/office31/image_list/amazon.txt'
+        # - len = 2817
         train_source_dataset = concat_dataset(root=root, tasks=source, download=True, transform=train_source_transform, start_idx=0)
+        
+        # train-target: 'data/office31/image_list/webcam.txt'
+        # - len = 795
         train_target_dataset = concat_dataset(root=root, tasks=target, download=True, transform=train_target_transform, start_idx=len(source))
+
+        # val-target: 'data/office31/image_list/webcam.txt'
+        # - len = 795
         val_dataset = concat_dataset(root=root, tasks=target, download=True, transform=val_transform, start_idx=len(source))
         if dataset_name == 'DomainNet':
             test_dataset = concat_dataset(root=root, tasks=target, split='test', download=True, transform=val_transform, start_idx=len(source))
         else:
+            # test-target: 'data/office31/image_list/webcam.txt'
+            # - len = 795            
             test_dataset = val_dataset
         class_names = train_source_dataset.datasets[0].classes
         num_classes = len(class_names)
