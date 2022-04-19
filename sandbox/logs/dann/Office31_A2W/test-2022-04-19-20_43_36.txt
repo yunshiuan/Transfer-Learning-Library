@@ -1,0 +1,24 @@
+Namespace(arch='resnet50', batch_size=32, bottleneck_dim=256, data='Office31', epochs=20, iters_per_epoch=10, log='logs/dann/Office31_A2W', lr=0.01, lr_decay=0.75, lr_gamma=0.001, momentum=0.9, no_hflip=False, no_pool=False, norm_mean=(0.485, 0.456, 0.406), norm_std=(0.229, 0.224, 0.225), per_class_eval=False, phase='test', print_freq=100, resize_size=224, root='data/office31', scratch=False, seed=1, source='A', target='W', trade_off=1.0, train_resizing='default', val_resizing='default', version='v2', weight_decay=0.001, workers=2)
+/home/sean/CS769/project/Transfer-Learning-Library/sandbox/dann.py:43: UserWarning: You have chosen to seed training. This will turn on the CUDNN deterministic setting, which can slow down your training considerably! You may see unexpected behavior when restarting from checkpoints.
+  warnings.warn('You have chosen to seed training. '
+train_transform:  Compose(
+    Compose(
+    ResizeImage(size=(256, 256))
+    RandomResizedCrop(size=(224, 224), scale=(0.08, 1.0), ratio=(0.75, 1.3333), interpolation=PIL.Image.BILINEAR)
+)
+    RandomHorizontalFlip(p=0.5)
+    ToTensor()
+    Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+)
+val_transform:  Compose(
+    Compose(
+    ResizeImage(size=(256, 256))
+    CenterCrop(size=(224, 224))
+)
+    ToTensor()
+    Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+)
+=> using model 'resnet50'
+Test: [ 0/25]	Time  0.838 ( 0.838)	Loss 3.1909e-02 (3.1909e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 89.686
+89.68553458159825
