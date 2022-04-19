@@ -1,0 +1,39 @@
+Namespace(arch='resnet50', batch_size=32, bottleneck_dim=256, data='Office31', epochs=20, iters_per_epoch=10, log='logs/dann/Office31_A2W', lr=0.01, lr_decay=0.75, lr_gamma=0.001, momentum=0.9, no_hflip=False, no_pool=False, norm_mean=(0.485, 0.456, 0.406), norm_std=(0.229, 0.224, 0.225), per_class_eval=False, phase='analysis', print_freq=100, resize_size=224, root='data/office31', scratch=False, seed=1, source='A', target='W', trade_off=1.0, train_resizing='default', val_resizing='default', version='v2', weight_decay=0.001, workers=2)
+/home/sean/CS769/project/Transfer-Learning-Library/sandbox/dann.py:43: UserWarning: You have chosen to seed training. This will turn on the CUDNN deterministic setting, which can slow down your training considerably! You may see unexpected behavior when restarting from checkpoints.
+  warnings.warn('You have chosen to seed training. '
+train_transform:  Compose(
+    Compose(
+    ResizeImage(size=(256, 256))
+    RandomResizedCrop(size=(224, 224), scale=(0.08, 1.0), ratio=(0.75, 1.3333), interpolation=PIL.Image.BILINEAR)
+)
+    RandomHorizontalFlip(p=0.5)
+    ToTensor()
+    Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+)
+val_transform:  Compose(
+    Compose(
+    ResizeImage(size=(256, 256))
+    CenterCrop(size=(224, 224))
+)
+    ToTensor()
+    Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+)
+=> using model 'resnet50'
+  0%|          | 0/88 [00:00<?, ?it/s]  1%|1         | 1/88 [00:00<01:10,  1.23it/s]  3%|3         | 3/88 [00:00<00:22,  3.86it/s]  6%|5         | 5/88 [00:01<00:12,  6.47it/s]  8%|7         | 7/88 [00:01<00:09,  8.87it/s] 10%|#         | 9/88 [00:01<00:07, 10.96it/s] 12%|#2        | 11/88 [00:01<00:06, 12.17it/s] 15%|#4        | 13/88 [00:01<00:05, 12.77it/s] 17%|#7        | 15/88 [00:01<00:05, 13.18it/s] 19%|#9        | 17/88 [00:01<00:05, 13.43it/s] 22%|##1       | 19/88 [00:01<00:05, 13.66it/s] 24%|##3       | 21/88 [00:02<00:04, 13.75it/s] 26%|##6       | 23/88 [00:02<00:04, 13.89it/s] 28%|##8       | 25/88 [00:02<00:04, 14.00it/s] 31%|###       | 27/88 [00:02<00:04, 13.31it/s] 33%|###2      | 29/88 [00:02<00:04, 13.55it/s] 35%|###5      | 31/88 [00:02<00:04, 13.70it/s] 38%|###7      | 33/88 [00:02<00:03, 13.84it/s] 40%|###9      | 35/88 [00:03<00:03, 13.90it/s] 42%|####2     | 37/88 [00:03<00:03, 13.94it/s] 44%|####4     | 39/88 [00:03<00:03, 13.99it/s] 47%|####6     | 41/88 [00:03<00:03, 14.04it/s] 49%|####8     | 43/88 [00:03<00:03, 14.04it/s] 51%|#####1    | 45/88 [00:03<00:03, 14.03it/s] 53%|#####3    | 47/88 [00:03<00:02, 14.09it/s] 56%|#####5    | 49/88 [00:04<00:02, 14.09it/s] 58%|#####7    | 51/88 [00:04<00:02, 14.11it/s] 60%|######    | 53/88 [00:04<00:02, 14.06it/s] 62%|######2   | 55/88 [00:04<00:02, 14.04it/s] 65%|######4   | 57/88 [00:04<00:02, 14.03it/s] 67%|######7   | 59/88 [00:04<00:02, 14.01it/s] 69%|######9   | 61/88 [00:04<00:01, 14.03it/s] 72%|#######1  | 63/88 [00:05<00:01, 14.02it/s] 74%|#######3  | 65/88 [00:05<00:01, 14.06it/s] 76%|#######6  | 67/88 [00:05<00:01, 14.03it/s] 78%|#######8  | 69/88 [00:05<00:01, 14.09it/s] 81%|########  | 71/88 [00:05<00:01, 14.01it/s] 83%|########2 | 73/88 [00:05<00:01, 13.91it/s] 85%|########5 | 75/88 [00:05<00:00, 13.80it/s] 88%|########7 | 77/88 [00:06<00:00, 13.77it/s] 90%|########9 | 79/88 [00:06<00:00, 13.71it/s] 92%|#########2| 81/88 [00:06<00:00, 13.67it/s] 94%|#########4| 83/88 [00:06<00:00, 13.65it/s] 97%|#########6| 85/88 [00:06<00:00, 13.63it/s] 99%|#########8| 87/88 [00:06<00:00, 13.58it/s]100%|##########| 88/88 [00:06<00:00, 12.59it/s]
+  0%|          | 0/24 [00:00<?, ?it/s]  4%|4         | 1/24 [00:00<00:08,  2.78it/s] 12%|#2        | 3/24 [00:00<00:03,  5.93it/s] 21%|##        | 5/24 [00:00<00:02,  7.10it/s] 29%|##9       | 7/24 [00:01<00:02,  7.58it/s] 38%|###7      | 9/24 [00:01<00:01,  8.10it/s] 46%|####5     | 11/24 [00:01<00:01,  8.08it/s] 54%|#####4    | 13/24 [00:01<00:01,  8.29it/s] 62%|######2   | 15/24 [00:01<00:01,  8.26it/s] 71%|#######   | 17/24 [00:02<00:00,  8.25it/s] 79%|#######9  | 19/24 [00:02<00:00,  8.14it/s] 88%|########7 | 21/24 [00:02<00:00,  8.19it/s] 96%|#########5| 23/24 [00:02<00:00,  8.17it/s]100%|##########| 24/24 [00:03<00:00,  7.84it/s]
+/home/sean/.conda/envs/transfer-gpu/lib/python3.8/site-packages/sklearn/manifold/_t_sne.py:780: FutureWarning: The default initialization in TSNE will change from 'random' to 'pca' in 1.2.
+  warnings.warn(
+/home/sean/.conda/envs/transfer-gpu/lib/python3.8/site-packages/sklearn/manifold/_t_sne.py:790: FutureWarning: The default learning rate in TSNE will change from 200.0 to 'auto' in 1.2.
+  warnings.warn(
+Saving t-SNE to logs/dann/Office31_A2W/visualize/TSNE.pdf
+epoch 0 accuracy: 78.94002532958984 A-dist: 1.1576008796691895
+epoch 1 accuracy: 80.89260864257812 A-dist: 1.2357041835784912
+epoch 2 accuracy: 80.6136703491211 A-dist: 1.2245466709136963
+epoch 3 accuracy: 82.56624603271484 A-dist: 1.302649736404419
+epoch 4 accuracy: 83.26359558105469 A-dist: 1.3305437564849854
+epoch 5 accuracy: 82.56624603271484 A-dist: 1.302649736404419
+epoch 6 accuracy: 82.28730773925781 A-dist: 1.291492223739624
+epoch 7 accuracy: 83.26359558105469 A-dist: 1.3305437564849854
+epoch 8 accuracy: 84.37935638427734 A-dist: 1.3751742839813232
+epoch 9 accuracy: 84.10041809082031 A-dist: 1.3640165328979492
+A-distance = tensor(1.3640, device='cuda:0')

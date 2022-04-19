@@ -47,10 +47,11 @@ def main(args: argparse.Namespace):
                       'from checkpoints.')
     # benchmark mode is good whenever your input sizes for your network do not vary. This way, cudnn will look for the optimal set of algorithms for that particular configuration (which takes some time). This usually leads to faster runtime. But if your input sizes changes at each iteration, then cudnn will benchmark every time a new size appears, possibly leading to worse runtime performances.
     cudnn.benchmark = True
-    
+
     # ------------------
     # Data loading code
     # - in this example, validation dataset == test dataset == train-target dataset == 'data/office31/image_list/webcam.txt'
+    # -- note: the slight difference between train-target and val & test is that the train dataset has `RandomResizedCrop()` and `RandomHorizontalFlip()`.
     # ------------------
     train_transform = utils.get_train_transform(args.train_resizing, random_horizontal_flip=not args.no_hflip,
                                                 random_color_jitter=False, resize_size=args.resize_size,
@@ -59,24 +60,24 @@ def main(args: argparse.Namespace):
                                             norm_mean=args.norm_mean, norm_std=args.norm_std)
     print("train_transform: ", train_transform)
     print("val_transform: ", val_transform)
-    
+
     train_source_dataset, train_target_dataset, val_dataset, test_dataset, num_classes, args.class_names = \
         utils.get_dataset(args.data, args.root, args.source,
                           args.target, train_transform, val_transform)
     # train-source: 'data/office31/image_list/amazon.txt'
-    # - len = 2817                          
+    # - len = 2817
     train_source_loader = DataLoader(train_source_dataset, batch_size=args.batch_size,
                                      shuffle=True, num_workers=args.workers, drop_last=True)
     # train-target: 'data/office31/image_list/webcam.txt'
-    # - len = 795                                     
+    # - len = 795
     train_target_loader = DataLoader(train_target_dataset, batch_size=args.batch_size,
                                      shuffle=True, num_workers=args.workers, drop_last=True)
     # val-target: 'data/office31/image_list/webcam.txt'
-    # - len = 795    
+    # - len = 795
     val_loader = DataLoader(
         val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
     # test-target: 'data/office31/image_list/webcam.txt'
-    # - len = 795           
+    # - len = 795
     test_loader = DataLoader(
         test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers)
 
@@ -88,11 +89,11 @@ def main(args: argparse.Namespace):
     # create the DANN model
     # - classifier (ImageClassifier):
     # -- backbone (feature extractor) -> pool_layer -> bottleneck -> (domain-invariant feature, dim = args.bottleneck_dim = 256) -> head (label predictor)
-    # --- backbone: 'resnet50': 
+    # --- backbone: 'resnet50':
     #   ---- input.shape = torch.Size([64, 3, 224, 224])
     #   ---- output.shape: torch.Size([64, 2048, 7, 7])
     #
-    # --- pool_layer: 
+    # --- pool_layer:
     # Sequential(
     #   (0): AdaptiveAvgPool2d(output_size=(1, 1))
     #   (1): Flatten(start_dim=1, end_dim=-1)
@@ -100,7 +101,7 @@ def main(args: argparse.Namespace):
     #   ---- input.shape = torch.Size([64, 2048, 7, 7])
     #   ---- output.shape = torch.Size([64, 2048])
     #
-    # --- bottleneck: 
+    # --- bottleneck:
     #  Sequential(
     #   (0): Linear(in_features=2048, out_features=256, bias=True)
     #   (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
@@ -109,7 +110,7 @@ def main(args: argparse.Namespace):
     #   ---- input.shape = torch.Size([64, 2048])
     #   ---- output.shape [the domain-invariant feature] = torch.Size([64, 256])
     #
-    # --- head: 
+    # --- head:
     #  Linear(in_features=256, out_features=31, bias=True)
     #   ---- input.shape = torch.Size([64, 256])
     #   ---- output.shape = torch.Size([64, 31]) # 31 = 31 object categories in three domains: Amazon, DSLR and Webcam
@@ -127,9 +128,9 @@ def main(args: argparse.Namespace):
     #         (0): Linear(in_features=1024, out_features=1, bias=True)
     #       (1): Sigmoid()
     #   )
-    # )     
+    # )
     #   -- input.shape = torch.Size([64, 256])
-    #   -- output.shape = torch.Size([64, 1])        
+    #   -- output.shape = torch.Size([64, 1])
     # ------------------
     print("=> using model '{}'".format(args.arch))
     backbone = utils.get_model(args.arch, pretrain=not args.scratch)
@@ -141,7 +142,7 @@ def main(args: argparse.Namespace):
                                  pool_layer=pool_layer, finetune=not args.scratch).to(device)
     domain_discri = DomainDiscriminator(
         in_feature=classifier.features_dim, hidden_size=1024).to(device)
-    
+
     # ------------------
     # define optimizer and lr scheduler
     # ------------------
@@ -149,7 +150,7 @@ def main(args: argparse.Namespace):
                     args.lr, momentum=args.momentum, weight_decay=args.weight_decay, nesterov=True)
     lr_scheduler = LambdaLR(optimizer, lambda x:  args.lr *
                             (1. + args.lr_gamma * float(x)) ** (-args.lr_decay))
-    
+
     # ------------------
     # define the adversarial loss function
     #
@@ -167,7 +168,7 @@ def main(args: argparse.Namespace):
     #     (1): Sigmoid()
     #     )
     # )
-    # )    
+    # )
     # ------------------
     domain_adv = DomainAdversarialLoss(domain_discri).to(device)
 
@@ -214,7 +215,7 @@ def main(args: argparse.Namespace):
         # - lr decays throughout the time
         # ------------------
         print("lr:", lr_scheduler.get_last_lr()[0])
-        
+
         # ------------------
         # train for one epoch (for each epoch, train for `iters-per-epoch` iterations)
         # ------------------
@@ -288,7 +289,7 @@ def train(train_source_iter: ForeverDataIterator, train_target_iter: ForeverData
         #   - shape = 32
         # x_t: the intput features of the target domain
         #   - shape: torch.Size([32, 3, 224, 224])
-        # ------------------        
+        # ------------------
         x_s, labels_s = next(train_source_iter)[:2]
         x_t, = next(train_target_iter)[:1]
 
@@ -298,17 +299,17 @@ def train(train_source_iter: ForeverDataIterator, train_target_iter: ForeverData
 
         # measure data loading time
         data_time.update(time.time() - end)
-        
-        # ------------------        
+
+        # ------------------
         # feedforward: compute output
         # - concatenate the inputs from the source and the target domain only for convenience
         # -- treating them as separate batches
-        # ------------------        
+        # ------------------
         # x = (x_s, s_t)
         # - x.shape = torch.Size([64, 3, 224, 224])
         x = torch.cat((x_s, x_t), dim=0)
 
-        # y = y_hat = (y_hat_s, y_hat_t) 
+        # y = y_hat = (y_hat_s, y_hat_t)
         # - y.shape = torch.Size([64, 31]), 31 =  # classes
         # f = the domain-invariant feature
         # - f.shape = torch.Size([64, 256])
@@ -318,12 +319,12 @@ def train(train_source_iter: ForeverDataIterator, train_target_iter: ForeverData
         y_s, y_t = y.chunk(2, dim=0)
         f_s, f_t = f.chunk(2, dim=0)
 
-        # ------------------        
+        # ------------------
         # compute the loss
         # - total loss = classification loss + domain adversarial loss
         # -- classification loss = cross entropy loss of (source y_hat, source y_ground_truth)
         # -- domain adversarial loss = the domain adversarial loss between (f_s, f_t)
-        # ------------------        
+        # ------------------
         # - classification loss
         cls_loss = F.cross_entropy(y_s, labels_s)
         # - domain adversarial loss
@@ -333,19 +334,19 @@ def train(train_source_iter: ForeverDataIterator, train_target_iter: ForeverData
         loss = cls_loss + transfer_loss * args.trade_off
 
         cls_acc = accuracy(y_s, labels_s)[0]
-        
-        # ------------------        
-        # update the averahe loss, classication acc, domain accuracy 
+
+        # ------------------
+        # update the averahe loss, classication acc, domain accuracy
         # - for domain accuracy, the closer it's to the 'random rate', the better it is
-        # ------------------        
+        # ------------------
         losses.update(loss.item(), x_s.size(0))
         cls_accs.update(cls_acc.item(), x_s.size(0))
         domain_accs.update(domain_acc.item(), x_s.size(0))
-        
-        # ------------------        
+
+        # ------------------
         # back-propagation
         # - compute gradient and do the SGD step
-        # ------------------                
+        # ------------------
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -355,11 +356,11 @@ def train(train_source_iter: ForeverDataIterator, train_target_iter: ForeverData
         batch_time.update(time.time() - end)
         end = time.time()
 
-        # ------------------                
+        # ------------------
         # print the acc and loss at this time
         # - e.g., Epoch: [17][ 900/1000]	Time  0.38 ( 0.38)	Data  0.11 ( 0.12)	Loss   0.76 (  0.75)	Cls Acc 100.0 (98.4)	Domain Acc 56.2 (56.4)
         # -- value of this iteration (average so far within this epoch)
-        # ------------------                
+        # ------------------
         if i % args.print_freq == 0:
             progress.display(i)
 
@@ -369,14 +370,15 @@ if __name__ == '__main__':
     # - https://tl.thuml.ai/get_started/quickstart.html
     # - CUDA_VISIBLE_DEVICES=0 python dann.py data/office31 -d Office31 -s A -t W -a resnet50 --epochs 20 --seed 1 --log logs/dann/Office31_A2W
     VERSION = "v2"
-    PHASE = 'train'
+    # PHASE = 'train'
     # PHASE = 'test'
+    PHASE = 'analysis'
     ROOT = 'data/office31'
     LOG = 'logs/dann/Office31_A2W'
     # self.image_list
     # - {'A': 'image_list/amazon.txt', 'D': 'image_list/dslr.txt', 'W': 'image_list/webcam.txt'}
-    DOMAIN_SOURCE = "A" # 'image_list/amazon.txt'
-    DOMAIN_TARGET = "W" # 'image_list/webcam.txt'
+    DOMAIN_SOURCE = "A"  # 'image_list/amazon.txt'
+    DOMAIN_TARGET = "W"  # 'image_list/webcam.txt'
     NUM_EPOCHS = 20
     SEED = 1
     ARCH = "resnet50"
@@ -405,7 +407,7 @@ if __name__ == '__main__':
     parser.add_argument('--norm-std', type=float, nargs='+',
                         default=(0.229, 0.224, 0.225), help='normalization std')
     # model parameters
-    parser.add_argument('-a', '--arch', metavar='ARCH', default=ARCH, #'resnet18',
+    parser.add_argument('-a', '--arch', metavar='ARCH', default=ARCH,  # 'resnet18',
                         choices=utils.get_model_names(),
                         help='backbone architecture: ' +
                              ' | '.join(utils.get_model_names()) +
