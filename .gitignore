@@ -137,8 +137,11 @@ examples/domain_adaptation/digits/data/*
 **/__MACOSX/
 **/checkpoints
 
+*.tgz
+*.jpg
+*.zip
 
-data/office31/
-sandbox/data/office31/
+# data/office31/**/.tgz
+# sandbox/data/office31/
 
 *.DS_Store

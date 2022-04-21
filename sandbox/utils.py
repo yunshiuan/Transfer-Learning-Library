@@ -72,12 +72,14 @@ def get_dataset(dataset_name, root, source, target, train_source_transform, val_
 
         def concat_dataset(tasks, start_idx, **kwargs):
             # return ConcatDataset([dataset(task=task, **kwargs) for task in tasks])
-
+            if not isinstance(tasks , list):
+                tasks = [tasks]
             # __init__(domains: Iterable[Dataset], domain_names: Iterable[str], domain_ids)
             # - domains = [dataset(task=task, **kwargs) for task in tasks], len = 1
             # - domain_names = tasks = 'A'
             # - domain_idx = list(range(start_idx, start_idx+len(tasks))) = [0]
-            return MultipleDomainsDataset([dataset(task=task, **kwargs) for task in tasks], domain_names = tasks, domain_ids=list(range(start_idx, start_idx+len(tasks))))
+            domains = [dataset(task=task, **kwargs) for task in tasks]
+            return MultipleDomainsDataset(domains=domains, domain_names = tasks, domain_ids=list(range(start_idx, start_idx+len(tasks))))
         
         # train-source: 'data/office31/image_list/amazon.txt'
         # - len = 2817
