@@ -1,5 +1,6 @@
 from .imagelist import ImageList
 from .office31 import Office31
+from .office31_v2 import Office31_v2
 from .officehome import OfficeHome
 from .visda2017 import VisDA2017
 from .officecaltech import OfficeCaltech
@@ -28,4 +29,4 @@ from .cifar import CIFAR10, CIFAR100
 __all__ = ['ImageList', 'Office31', 'OfficeHome', "VisDA2017", "OfficeCaltech", "DomainNet", "ImageNetR",
            "ImageNetSketch", "Aircraft", "cub200", "StanfordCars", "StanfordDogs", "COCO70", "OxfordIIITPets", "PACS",
            "DTD", "OxfordFlowers102", "PatchCamelyon", "Retinopathy", "EuroSAT", "Resisc45", "Food101", "SUN397",
-           "Caltech101", "CIFAR10", "CIFAR100"]
+           "Caltech101", "CIFAR10", "CIFAR100", "Office31_v2"]
