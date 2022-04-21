@@ -71,6 +71,15 @@ def get_dataset(dataset_name, root, source, target, train_source_transform, val_
         dataset = datasets.__dict__[dataset_name]
 
         def concat_dataset(tasks, start_idx, **kwargs):
+            """Concatenate multiple datasets.
+
+            Args:
+                tasks (List): a list of characters ['A','B',...] or a single character 'A'
+                start_idx (_type_): _description_
+
+            Returns:
+                _type_: MultipleDomainsDataset
+            """
             # return ConcatDataset([dataset(task=task, **kwargs) for task in tasks])
             if not isinstance(tasks , list):
                 tasks = [tasks]

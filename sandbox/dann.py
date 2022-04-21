@@ -376,6 +376,8 @@ if __name__ == '__main__':
     PHASE = 'train'
     # PHASE = 'test'
     # PHASE = 'analysis'
+    # ROOT = 'data/office31'
+    # LOG = 'logs/dann/Office31_A2W'    
     ROOT = 'data/office31_v2'
     LOG = 'logs/dann/Office31_A2W_v2'
     # self.image_list
@@ -383,6 +385,9 @@ if __name__ == '__main__':
     DATASET = "Office31_v2" # "Office"
     DOMAIN_SOURCE = "A_train"  # 'image_list/amazon.txt'
     DOMAIN_TARGET = "W_train"  # 'image_list/webcam.txt'
+    # DATASET = "Office31" # "Office"
+    # DOMAIN_SOURCE = "A"  # 'image_list/amazon.txt'
+    # DOMAIN_TARGET = "W"  # 'image_list/webcam.txt'    
     NUM_EPOCHS = 20
     SEED = 1
     ARCH = "resnet50"

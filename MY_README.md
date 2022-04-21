@@ -10,6 +10,9 @@
 
 `pip install -r requirements.txt`
 
+`conda install pandas`
+`conda install scikit-learn`
+
 - optional:
 `conda install gpustat`
 
