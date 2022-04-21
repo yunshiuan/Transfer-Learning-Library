@@ -372,32 +372,39 @@ if __name__ == '__main__':
     # Attemp to replicate this
     # - https://tl.thuml.ai/get_started/quickstart.html
     # - CUDA_VISIBLE_DEVICES=0 python dann.py data/office31 -d Office31 -s A -t W -a resnet50 --epochs 20 --seed 1 --log logs/dann/Office31_A2W
+    # - par
+    DATASET = "Office31"
+    # DATASET = "Office31_v2"
     VERSION = "v3"
     PHASE = 'train'
     # PHASE = 'test'
     # PHASE = 'analysis'
-    # ROOT = 'data/office31'
-    # LOG = 'logs/dann/Office31_A2W'    
-    ROOT = 'data/office31_v2'
-    LOG = 'logs/dann/Office31_A2W_v2'
+
     # self.image_list
     # - {'A': 'image_list/amazon.txt', 'D': 'image_list/dslr.txt', 'W': 'image_list/webcam.txt'}
-    DATASET = "Office31_v2" # "Office"
-    DOMAIN_SOURCE = "A_train"  # 'image_list/amazon.txt'
-    DOMAIN_TARGET = "W_train"  # 'image_list/webcam.txt'
-    # DATASET = "Office31" # "Office"
-    # DOMAIN_SOURCE = "A"  # 'image_list/amazon.txt'
-    # DOMAIN_TARGET = "W"  # 'image_list/webcam.txt'    
+    if DATASET == "Office31":
+        DOMAIN_SOURCE = "A"  # 'image_list/amazon.txt'
+        DOMAIN_TARGET = "W"  # 'image_list/webcam.txt'    
+    elif DATASET == "Office31_v2":
+        DOMAIN_SOURCE = "A_train" 
+        DOMAIN_TARGET = "W_train"    
+
     NUM_EPOCHS = 20
     SEED = 1
     ARCH = "resnet50"
     ITERS_PER_EPOCH = 10
+    
+    # - path
+    PATH_ROOT = '/home/sean/CS769/project/Transfer-Learning-Library'
+    # PATH_LOG = 'logs/dann/Office31_A2W'    
+    PATH_DATA = osp.join(PATH_ROOT,'data',DATASET.lower())
+    PATH_LOG = osp.join('logs/dann',DATASET)
 
     parser = argparse.ArgumentParser(
         description='DANN for Unsupervised Domain Adaptation')
     # # dataset parameters
     parser.add_argument('-root', metavar='DIR',
-                        help='root path of dataset', default=ROOT)
+                        help='root path of dataset', default=PATH_DATA)
     parser.add_argument('-d', '--data', metavar='DATA', default=DATASET, choices=utils.get_dataset_names(),
                         help='dataset: ' + ' | '.join(utils.get_dataset_names()) +
                              ' (default: Office31)')
@@ -456,7 +463,7 @@ if __name__ == '__main__':
                         help='seed for initializing training. ')
     parser.add_argument('--per-class-eval', action='store_true',
                         help='whether output per-class accuracy during evaluation')
-    parser.add_argument("--log", type=str, default=LOG,  # 'dann',
+    parser.add_argument("--log", type=str, default=PATH_LOG,  # 'dann',
                         help="Where to save logs, checkpoints and debugging images.")
     parser.add_argument("--phase", type=str, default=PHASE, choices=['train', 'test', 'analysis'],
                         help="When phase is 'test', only test the model."
