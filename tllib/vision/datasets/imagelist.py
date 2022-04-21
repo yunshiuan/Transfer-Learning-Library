@@ -36,6 +36,9 @@ class ImageList(datasets.VisionDataset):
 
     def __init__(self, root: str, classes: List[str], data_list_file: str,
                  transform: Optional[Callable] = None, target_transform: Optional[Callable] = None):
+        # - root: 'data/office31'
+        # - classes: ['back_pack', 'bike', 'bike_helmet',...
+        # - data_list_file: 'data/office31/image_list/amazon.txt'
         super().__init__(root, transform=transform, target_transform=target_transform)
         # the list of the file name of the images
         self.samples = self.parse_data_file(data_list_file)
@@ -99,6 +102,18 @@ class ImageList(datasets.VisionDataset):
                 target = int(target)
                 data_list.append((path, target))
         return data_list
+    
+    # def split_data(self, split = List[float]) -> List[ImageList]:
+    #     """
+    #     split the ImageList into several smaller ImageLists.
+
+    #     Args:
+    #         split (List[float]): the weights (should sum to one) for the size of each of the smaller output ImageLists.
+    #     Returns:
+    #         list_image_list (List[ImageList])
+    #     """
+    #     # TODO
+    #     pass
 
     @property
     def num_classes(self) -> int:
@@ -112,7 +127,7 @@ class ImageList(datasets.VisionDataset):
 
 
 class MultipleDomainsDataset(Dataset[T_co]):
-    r"""Dataset as a concatenation of multiple datasets.
+    r"""Dataset as a concatenation of multiple datasets. Note that this does not create a new concatenated datatset. Rather, under the hood, the multiple datasets are stored as a list of datasets.
 
     This class is useful to assemble different existing datasets.
 
