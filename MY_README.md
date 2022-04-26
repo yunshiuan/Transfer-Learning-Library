@@ -37,3 +37,12 @@
   - () run the model and evaluate on the val & test set of both the source and the target domains
 
 - apply the DANN model to the stance detection dataset.
+
+
+------------------
+
+# How to create a custom dataset
+
+- should create a child class of `ImageList`
+  - for an example, see `tllib/vision/datasets/office31_v2.py`
+- run `sandbox/dann.py` with `DATASET = Office31_v2`
