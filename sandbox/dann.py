@@ -223,7 +223,7 @@ def main(args: argparse.Namespace):
               lr_scheduler, epoch, args)
 
         # ------------------
-        # evaluate on the validation set
+        # evaluate at this epoch on the validation set
         # - in this example, validation dataset == test dataset == train-target dataset == 'data/office31/image_list/webcam.txt'
         # - len = 795
         # ------------------
@@ -232,14 +232,14 @@ def main(args: argparse.Namespace):
         # -- classifier: the main classifier with the label predictor at the end
         acc1 = utils.validate(val_loader, classifier, args, device)
 
-        # remember best acc@1 and save checkpoint
+        # remember best acc@1 (through all epochs) and save checkpoint
         torch.save(classifier.state_dict(),
                    logger.get_checkpoint_path('latest'))
         if acc1 > best_acc1:
             shutil.copy(logger.get_checkpoint_path('latest'),
                         logger.get_checkpoint_path('best'))
         best_acc1 = max(acc1, best_acc1)
-
+    
     print("best_acc1 = {:3.1f}".format(best_acc1))
     
     # ------------------
