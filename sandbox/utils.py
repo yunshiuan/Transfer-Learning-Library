@@ -2,6 +2,12 @@
 @author: Junguang Jiang, Baixu Chen
 @contact: JiangJunguang1123@outlook.com, cbx_99_hasta@outlook.com
 """
+from tllib.vision.datasets.imagelist import MultipleDomainsDataset
+from tllib.utils.meter import AverageMeter, ProgressMeter
+from tllib.utils.metric import accuracy, ConfusionMatrix
+from tllib.vision.transforms import ResizeImage
+import tllib.vision.models as models
+import tllib.vision.datasets as datasets
 import sys
 import os.path as osp
 import time
@@ -13,14 +19,8 @@ import torch.nn.functional as F
 import torchvision.transforms as T
 
 # add the directory of the repo to allow importing 'tllib'
-sys.path.append('.') # for interactive shell mode
-sys.path.append('..') # console mode
-import tllib.vision.datasets as datasets
-import tllib.vision.models as models
-from tllib.vision.transforms import ResizeImage
-from tllib.utils.metric import accuracy, ConfusionMatrix
-from tllib.utils.meter import AverageMeter, ProgressMeter
-from tllib.vision.datasets.imagelist import MultipleDomainsDataset
+sys.path.append('.')  # for interactive shell mode
+sys.path.append('..')  # console mode
 
 
 def get_model_names():
@@ -81,37 +81,89 @@ def get_dataset(dataset_name, root, source, target, train_source_transform, val_
                 _type_: MultipleDomainsDataset
             """
             # return ConcatDataset([dataset(task=task, **kwargs) for task in tasks])
-            if not isinstance(tasks , list):
+            if not isinstance(tasks, list):
                 tasks = [tasks]
             # __init__(domains: Iterable[Dataset], domain_names: Iterable[str], domain_ids)
             # - domains = [dataset(task=task, **kwargs) for task in tasks], len = 1
             # - domain_names = tasks = 'A'
             # - domain_idx = list(range(start_idx, start_idx+len(tasks))) = [0]
             domains = [dataset(task=task, **kwargs) for task in tasks]
-            return MultipleDomainsDataset(domains=domains, domain_names = tasks, domain_ids=list(range(start_idx, start_idx+len(tasks))))
-        
+            return MultipleDomainsDataset(domains=domains, domain_names=tasks, domain_ids=list(range(start_idx, start_idx+len(tasks))))
+
         # train-source: 'data/office31/image_list/amazon.txt'
         # - len = 2817
-        train_source_dataset = concat_dataset(root=root, tasks=source, download=True, transform=train_source_transform, start_idx=0)
-        
+        train_source_dataset = concat_dataset(
+            root=root, tasks=source, download=True, transform=train_source_transform, start_idx=0)
+
         # train-target: 'data/office31/image_list/webcam.txt'
         # - len = 795
-        train_target_dataset = concat_dataset(root=root, tasks=target, download=True, transform=train_target_transform, start_idx=len(source))
+        train_target_dataset = concat_dataset(
+            root=root, tasks=target, download=True, transform=train_target_transform, start_idx=len(source))
 
         # val-target: 'data/office31/image_list/webcam.txt'
         # - len = 795
-        val_dataset = concat_dataset(root=root, tasks=target, download=True, transform=val_transform, start_idx=len(source))
+        val_dataset = concat_dataset(
+            root=root, tasks=target, download=True, transform=val_transform, start_idx=len(source))
         if dataset_name == 'DomainNet':
-            test_dataset = concat_dataset(root=root, tasks=target, split='test', download=True, transform=val_transform, start_idx=len(source))
+            test_dataset = concat_dataset(
+                root=root, tasks=target, split='test', download=True, transform=val_transform, start_idx=len(source))
         else:
             # test-target: 'data/office31/image_list/webcam.txt'
-            # - len = 795            
+            # - len = 795
             test_dataset = val_dataset
         class_names = train_source_dataset.datasets[0].classes
         num_classes = len(class_names)
     else:
         raise NotImplementedError(dataset_name)
     return train_source_dataset, train_target_dataset, val_dataset, test_dataset, num_classes, class_names
+
+
+def get_dataset_with_partition(dataset_name, root, domain_train, domain_val, domain_test, train_transform, val_transform, test_transform=None):
+    if test_transform is None:
+        test_transform = val_transform
+    if dataset_name == "Office31_v2":
+        dataset = datasets.__dict__[dataset_name]
+
+        def concat_dataset(tasks, start_idx, **kwargs):
+            """Concatenate multiple datasets.
+
+            Args:
+                tasks (List): a list of characters ['A','B',...] or a single character 'A'
+                start_idx (_type_): _description_
+
+            Returns:
+                _type_: MultipleDomainsDataset
+            """
+            # return ConcatDataset([dataset(task=task, **kwargs) for task in tasks])
+            if not isinstance(tasks, list):
+                tasks = [tasks]
+            # __init__(domains: Iterable[Dataset], domain_names: Iterable[str], domain_ids)
+            # - domains = [dataset(task=task, **kwargs) for task in tasks], len = 1
+            # - domain_names = tasks = 'A'
+            # - domain_idx = list(range(start_idx, start_idx+len(tasks))) = [0]
+            domains = [dataset(task=task, **kwargs) for task in tasks]
+            return MultipleDomainsDataset(domains=domains, domain_names=tasks, domain_ids=list(range(start_idx, start_idx+len(tasks))))
+
+        # train-source: 'data/office31/image_list/amazon.txt'
+        # - len = 2817
+        train_dataset = concat_dataset(
+            root=root, tasks=domain_train, download=True, transform=train_transform, start_idx=0)
+
+        # train-target: 'data/office31/image_list/webcam.txt'
+        # - len = 795
+        val_dataset = concat_dataset(
+            root=root, tasks=domain_val, download=True, transform=val_transform, start_idx=0)
+
+        # val-target: 'data/office31/image_list/webcam.txt'
+        # - len = 795
+        test_dataset = concat_dataset(
+            root=root, tasks=domain_test, download=True, transform=test_transform, start_idx=0)
+
+        class_names = train_dataset.datasets[0].classes
+        num_classes = len(class_names)
+    else:
+        raise NotImplementedError(dataset_name)
+    return train_dataset, val_dataset, test_dataset, num_classes, class_names
 
 
 def validate(val_loader, model, args, device) -> float:
@@ -158,7 +210,7 @@ def validate(val_loader, model, args, device) -> float:
                 # Test: [ 0/25]   Time  1.528 ( 1.528)    Loss 2.8658e+00 (2.8658e+00)    Acc@1  71.88 ( 71.88)
                 # -- the accruacy so far
                 progress.display(i)
-        # ------------------    
+        # ------------------
         # print the overall top-1 accuracy
         # - * Acc@1 80.629
         # ------------------
@@ -200,7 +252,8 @@ def get_train_transform(resizing='default', random_horizontal_flip=True, random_
     if random_horizontal_flip:
         transforms.append(T.RandomHorizontalFlip())
     if random_color_jitter:
-        transforms.append(T.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5))
+        transforms.append(T.ColorJitter(
+            brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5))
     transforms.extend([
         T.ToTensor(),
         T.Normalize(mean=norm_mean, std=norm_std)
