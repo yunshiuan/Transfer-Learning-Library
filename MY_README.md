@@ -46,3 +46,10 @@
 - should create a child class of `ImageList`
   - for an example, see `tllib/vision/datasets/office31_v2.py`
 - run `sandbox/dann.py` with `DATASET = Office31_v2`
+
+------------------
+
+# run with nohup
+
+- at the repo dir:
+  - `nohup python -u sandbox/dann_v2.py &`

@@ -9,6 +9,7 @@ import warnings
 import sys
 import argparse
 import shutil
+import os
 import os.path as osp
 
 import torch
@@ -18,6 +19,8 @@ from torch.optim import SGD
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
+
+# sys.path.insert(0, "..")
 
 import utils
 from tllib.modules.domain_discriminator import DomainDiscriminator
@@ -274,7 +277,7 @@ def main(args: argparse.Namespace):
 
     # ------------------
     # evaluate on all the data sets
-    # - using the best model so far    
+    # - using the best model so far
     # ------------------
     for k_set in dict_loader:
         # top-1 accuracy
@@ -419,12 +422,12 @@ if __name__ == '__main__':
     NUM_EPOCHS = 20
     SEED = 1
     ARCH = "resnet50"
-    ITERS_PER_EPOCH = 10
+    ITERS_PER_EPOCH = 1000
 
     # - path
     PATH_ROOT = '/home/sean/CS769/project/Transfer-Learning-Library'
     PATH_DATA = osp.join(PATH_ROOT, 'data', DATASET.lower())
-    PATH_LOG = osp.join('logs/dann', DATASET)
+    PATH_LOG = osp.join(PATH_ROOT, 'logs', 'dann', DATASET, VERSION)
 
     parser = argparse.ArgumentParser(
         description='DANN for Unsupervised Domain Adaptation')

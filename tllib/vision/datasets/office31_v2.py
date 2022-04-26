@@ -96,7 +96,7 @@ class Office31_v2(ImageList):
             # raise an error if the image files not yet exists
             if not os.path.isdir(path_domain):
                 raise Exception(
-                    "Should call `office31.py` to download the image files first.")
+                    "Should call `office31.py` to download the image files first: "+path_domain)
 
         # check if the image list txts exist
         for file in self.IMAGE_LIST_OUTPUT.values():
@@ -110,7 +110,7 @@ class Office31_v2(ImageList):
             if not os.path.isfile(os.path.join(self.PATH_IMAGES_INPUT, file)):
                 # raise an error if the input image files not yet exists
                 raise Exception(
-                    "Should call `office31.py` to download the image list files first.")
+                    "Should call `office31.py` to download the image list files first: "+os.path.join(self.PATH_IMAGES_INPUT, file))
         # ------------------
         # generate the image lists
         # ------------------
@@ -155,7 +155,7 @@ class Office31_v2(ImageList):
             dict_df_image_list =\
                 {"train": df_image_list_train, "val": df_image_list_val,
                     "test": df_image_list_test}
-            path_output = os.path.join(self.PATH_IMAGES_OUTPUT,'image_list')
+            path_output = os.path.join(self.PATH_IMAGES_OUTPUT, 'image_list')
             if not os.path.exists(path_output):
                 os.makedirs(path_output)
 
