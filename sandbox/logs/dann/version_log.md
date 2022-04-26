@@ -11,7 +11,7 @@ v2
   - test:
     - target test =  `webcam`  (x+y)      
 - metric
-  - test acc: * Acc@1 89.686
+  - test acc (target domain): * Acc@1 89.686
 
 v3
 - note
@@ -25,3 +25,10 @@ v3
   - test:
     - source test =  `amazon_test` (x+y)
     - target test =  `webcam_test`  (x+y)    
+  - metric
+    Top-1 accuracy on source_train_loader: 98.97836538461539
+    Top-1 accuracy on target_train_loader: 81.91964285714286
+    Top-1 accuracy on source_val_loader: 85.79040849865224
+    Top-1 accuracy on target_val_loader: 88.67924499511719
+    Top-1 accuracy on source_test_loader: 87.23404255319149
+    Top-1 accuracy on target_test_loader: 88.67924485116635    
