@@ -103,7 +103,6 @@ class Office31_v2(ImageList):
             # geneate the image list txts if not yet exist
             if not os.path.isfile(os.path.join(root, file)):
                 self._generate_image_list()
-        
 
     def _generate_image_list(self):
         # check if the input image list txts exist
@@ -128,6 +127,9 @@ class Office31_v2(ImageList):
                 expand=True)
             df_image_list_input.columns = ['file', 'label']
 
+            # set the file dir to "../office31"
+            df_image_list_input.file = os.path.join(
+                '..', 'office31')+os.sep+df_image_list_input.file
             # ------------------
             # paritition the files into 'train/val/test' based on the given weights
             # - note that the partition should be done within each class to ensure the disribution of class is the same across the three partitions
@@ -153,11 +155,15 @@ class Office31_v2(ImageList):
             dict_df_image_list =\
                 {"train": df_image_list_train, "val": df_image_list_val,
                     "test": df_image_list_test}
+            path_output = os.path.join(self.PATH_IMAGES_OUTPUT,'image_list')
+            if not os.path.exists(path_output):
+                os.makedirs(path_output)
 
             for partition in self.LIST_PARTITION:
                 file_image_list_output = os.path.join(
                     self.PATH_IMAGES_OUTPUT, self.IMAGE_LIST_OUTPUT[input_domain+"_"+partition])
-                dict_df_image_list[partition].sort_values(by=['label'],inplace=True)
+                dict_df_image_list[partition].sort_values(
+                    by=['label'], inplace=True)
                 # dict_df_image_list[partition].to_csv(file_image_list_output)
                 dict_df_image_list[partition].to_csv(
                     file_image_list_output, header=None, index=None, sep=' ', mode='a')
