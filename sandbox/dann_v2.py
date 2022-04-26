@@ -247,7 +247,10 @@ def main(args: argparse.Namespace):
         # the learning rate at the start of this epoch
         # - lr decays throughout the time
         # ------------------
+        print("--------------------------")
+        print("Start of epoch [{}/{}]".format(epoch, args.epochs))
         print("lr:", lr_scheduler.get_last_lr()[0])
+        print("--------------------------")
 
         # ------------------
         # train for one epoch (for each epoch, train for `iters-per-epoch` iterations)
@@ -272,13 +275,20 @@ def main(args: argparse.Namespace):
             shutil.copy(logger.get_checkpoint_path('latest'),
                         logger.get_checkpoint_path('best'))
         best_acc1 = max(acc1, best_acc1)
+        print("--------------------------")
+        print("End of epoch [{}/{}]".format(epoch, args.epochs))
+        print("current top-1 acc on source_val= {:3.1f}".format(acc1))
+        print("--------------------------")
 
-    print("best_acc1 = {:3.1f}".format(best_acc1))
+    print("Best top-1 acc on source_val= {:3.1f}".format(best_acc1))
 
     # ------------------
     # evaluate on all the data sets
     # - using the best model so far
     # ------------------
+    print("--------------------------")
+    print("End of the training")
+    print("--------------------------")
     for k_set in dict_loader:
         # top-1 accuracy
         acc1 = utils.validate(
@@ -427,7 +437,7 @@ if __name__ == '__main__':
     # - path
     PATH_ROOT = '/home/sean/CS769/project/Transfer-Learning-Library'
     PATH_DATA = osp.join(PATH_ROOT, 'data', DATASET.lower())
-    PATH_LOG = osp.join(PATH_ROOT, 'logs', 'dann', DATASET, VERSION)
+    PATH_LOG = osp.join(PATH_ROOT, 'sandbox', 'logs', 'dann', DATASET, VERSION)
 
     parser = argparse.ArgumentParser(
         description='DANN for Unsupervised Domain Adaptation')
