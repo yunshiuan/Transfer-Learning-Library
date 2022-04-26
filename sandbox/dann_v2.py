@@ -234,7 +234,7 @@ def main(args: argparse.Namespace):
         for k_set in dict_loader:
             # top-1 accuracy
             acc1 = utils.validate(
-                dict_loader[k_set], classifier, args, device)
+                dict_loader[k_set], classifier, args, device, print_progress=False)
             print("Top-1 accuracy on {}: {}".format(k_set, acc1))
         return
 
@@ -281,19 +281,9 @@ def main(args: argparse.Namespace):
         print("--------------------------")
 
     print("Best top-1 acc on source_val= {:3.1f}".format(best_acc1))
-
-    # ------------------
-    # evaluate on all the data sets
-    # - using the best model so far
-    # ------------------
     print("--------------------------")
     print("End of the training")
     print("--------------------------")
-    for k_set in dict_loader:
-        # top-1 accuracy
-        acc1 = utils.validate(
-            dict_loader[k_set], classifier, args, device)
-        print("Top-1 accuracy on {}: {}".format(k_set, acc1))
     logger.close()
 
 
@@ -417,9 +407,9 @@ if __name__ == '__main__':
     # - par
     DATASET = "Office31_v2"
     VERSION = "v3"
-    PHASE = 'train'
-    # PHASE = 'test'
-    # PHASE = 'analysis'
+    # PHASE = 'train'
+    PHASE = 'test'
+    
 
     DOMAIN_SOURCE_TRAIN = "A_train"
     DOMAIN_SOURCE_VAL = "A_val"
@@ -429,10 +419,10 @@ if __name__ == '__main__':
     DOMAIN_TARGET_VAL = "W_val"
     DOMAIN_target_test = "W_test"
 
-    NUM_EPOCHS = 20
+    NUM_EPOCHS = 2  # 20
     SEED = 1
     ARCH = "resnet50"
-    ITERS_PER_EPOCH = 1000
+    ITERS_PER_EPOCH = 10  # 1000
 
     # - path
     PATH_ROOT = '/home/sean/CS769/project/Transfer-Learning-Library'

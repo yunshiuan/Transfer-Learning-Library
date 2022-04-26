@@ -26,9 +26,9 @@ v3
     - source test =  `amazon_test` (x+y)
     - target test =  `webcam_test`  (x+y)    
   - metric
-    Top-1 accuracy on source_train_loader: 98.97836538461539
-    Top-1 accuracy on target_train_loader: 81.91964285714286
-    Top-1 accuracy on source_val_loader: 85.79040849865224
-    Top-1 accuracy on target_val_loader: 88.67924499511719
-    Top-1 accuracy on source_test_loader: 87.23404255319149
-    Top-1 accuracy on target_test_loader: 88.67924485116635    
+  Top-1 accuracy on source_train_loader: 97.65625
+  Top-1 accuracy on target_train_loader: 81.02678571428571
+  Top-1 accuracy on source_val_loader: 86.6785078709333
+  Top-1 accuracy on target_val_loader: 86.16352186862778
+  Top-1 accuracy on source_test_loader: 87.41134751773049
+  Top-1 accuracy on target_test_loader: 84.90566100114546   

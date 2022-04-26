@@ -280,21 +280,4 @@ Epoch: [19][ 900/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.76 (  0.73
 Test: [ 0/18]	Time  0.247 ( 0.247)	Loss 5.3352e-02 (5.3352e-02)	Acc@1 100.00 (100.00)
  * Acc@1 85.790
 best_acc1 = 86.7
-Test: [ 0/52]	Time  0.266 ( 0.266)	Loss 9.4870e-02 (9.4870e-02)	Acc@1  96.88 ( 96.88)
- * Acc@1 98.978
-Top-1 accuracy on source_train_loader: 98.97836538461539
-Test: [ 0/14]	Time  0.364 ( 0.364)	Loss 1.0247e+00 (1.0247e+00)	Acc@1  84.38 ( 84.38)
- * Acc@1 81.920
-Top-1 accuracy on target_train_loader: 81.91964285714286
-Test: [ 0/18]	Time  0.246 ( 0.246)	Loss 5.3352e-02 (5.3352e-02)	Acc@1 100.00 (100.00)
- * Acc@1 85.790
-Top-1 accuracy on source_val_loader: 85.79040849865224
-Test: [0/5]	Time  0.369 ( 0.369)	Loss 7.1038e-01 (7.1038e-01)	Acc@1  90.62 ( 90.62)
- * Acc@1 88.679
-Top-1 accuracy on target_val_loader: 88.67924499511719
-Test: [ 0/18]	Time  0.265 ( 0.265)	Loss 6.2946e-03 (6.2946e-03)	Acc@1 100.00 (100.00)
- * Acc@1 87.234
-Top-1 accuracy on source_test_loader: 87.23404255319149
-Test: [0/5]	Time  0.373 ( 0.373)	Loss 9.2114e-01 (9.2114e-01)	Acc@1  90.62 ( 90.62)
- * Acc@1 88.679
-Top-1 accuracy on target_test_loader: 88.67924485116635
+

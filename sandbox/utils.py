@@ -166,7 +166,7 @@ def get_dataset_with_partition(dataset_name, root, domain_train, domain_val, dom
     return train_dataset, val_dataset, test_dataset, num_classes, class_names
 
 
-def validate(val_loader, model, args, device) -> float:
+def validate(val_loader, model, args, device, print_progress=True) -> float:
     batch_time = AverageMeter('Time', ':6.3f')
     losses = AverageMeter('Loss', ':.4e')
     top1 = AverageMeter('Acc@1', ':6.2f')
@@ -205,18 +205,19 @@ def validate(val_loader, model, args, device) -> float:
             # measure elapsed time
             batch_time.update(time.time() - end)
             end = time.time()
-
-            if i % args.print_freq == 0:
-                # Test: [ 0/25]   Time  1.528 ( 1.528)    Loss 2.8658e+00 (2.8658e+00)    Acc@1  71.88 ( 71.88)
-                # -- the accruacy so far
-                progress.display(i)
+            if print_progress:
+                if i % args.print_freq == 0:
+                    # Test: [ 0/25]   Time  1.528 ( 1.528)    Loss 2.8658e+00 (2.8658e+00)    Acc@1  71.88 ( 71.88)
+                    # -- the accruacy so far
+                    progress.display(i)
         # ------------------
         # print the overall top-1 accuracy
         # - * Acc@1 80.629
         # ------------------
-        print(' * Acc@1 {top1.avg:.3f}'.format(top1=top1))
-        if confmat:
-            print(confmat.format(args.class_names))
+        if print_progress:
+            print(' * Acc@1 {top1.avg:.3f}'.format(top1=top1))
+            if confmat:
+                print(confmat.format(args.class_names))
 
     return top1.avg
 
