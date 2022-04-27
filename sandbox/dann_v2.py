@@ -168,6 +168,8 @@ def main(args: argparse.Namespace):
     pool_layer = nn.Identity() if args.no_pool else None
 
     # - args.bottleneck_dim = 256
+    # issubclass(ImageClassifier, nn.Module) -> True
+    # isinstance(classifier, nn.Module) -> True
     classifier = ImageClassifier(backbone, num_classes, bottleneck_dim=args.bottleneck_dim,
                                  pool_layer=pool_layer, finetune=not args.scratch).to(device)
     domain_discri = DomainDiscriminator(
@@ -406,7 +408,7 @@ if __name__ == '__main__':
     # - CUDA_VISIBLE_DEVICES=0 python dann.py data/office31 -d Office31 -s A -t W -a resnet50 --epochs 20 --seed 1 --log logs/dann/Office31_A2W
     # - par
     DATASET = "Office31_v2"
-    VERSION = "v3"
+    VERSION = "v4"
     # PHASE = 'train'
     PHASE = 'test'
     
