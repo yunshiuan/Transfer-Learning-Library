@@ -280,9 +280,9 @@ def main(args: argparse.Namespace):
         print("current top-1 acc on source_val= {:3.1f}".format(acc1))
         print("--------------------------")
 
-    print("Best top-1 acc on source_val= {:3.1f}".format(best_acc1))
     print("--------------------------")
     print("End of the training")
+    print("Best top-1 acc on source_val= {:3.1f}".format(best_acc1))
     print("--------------------------")
     logger.close()
 
