@@ -409,8 +409,8 @@ if __name__ == '__main__':
     # - par
     DATASET = "Office31_v2"
     VERSION = "v4"
-    # PHASE = 'train'
-    PHASE = 'test'
+    PHASE = 'train'
+    # PHASE = 'test'
     # - the weight for the adversarial loss
     TRADEOFF = 0. # 1.
     
@@ -423,10 +423,10 @@ if __name__ == '__main__':
     DOMAIN_TARGET_VAL = "W_val"
     DOMAIN_target_test = "W_test"
 
-    NUM_EPOCHS = 2  # 20
+    NUM_EPOCHS = 20  # 20
     SEED = 1
     ARCH = "resnet50"
-    ITERS_PER_EPOCH = 10  # 1000
+    ITERS_PER_EPOCH = 1000  # 1000
 
     # - path
     PATH_ROOT = '/home/sean/CS769/project/Transfer-Learning-Library'

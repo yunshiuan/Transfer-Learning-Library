@@ -1,0 +1,425 @@
+Namespace(arch='resnet50', batch_size=32, bottleneck_dim=256, data='Office31_v2', epochs=20, iters_per_epoch=1000, log='/home/sean/CS769/project/Transfer-Learning-Library/sandbox/logs/dann/Office31_v2/v4', lr=0.01, lr_decay=0.75, lr_gamma=0.001, momentum=0.9, no_hflip=False, no_pool=False, norm_mean=(0.485, 0.456, 0.406), norm_std=(0.229, 0.224, 0.225), per_class_eval=False, phase='train', print_freq=100, resize_size=224, root='/home/sean/CS769/project/Transfer-Learning-Library/data/office31_v2', scratch=False, seed=1, source_test='A_test', source_train='A_train', source_val='A_val', target_test='W_test', target_train='W_train', target_val='W_val', trade_off=0.0, train_resizing='default', val_resizing='default', version='v4', weight_decay=0.001, workers=2)
+sandbox/dann_v2.py:46: UserWarning: You have chosen to seed training. This will turn on the CUDNN deterministic setting, which can slow down your training considerably! You may see unexpected behavior when restarting from checkpoints.
+  warnings.warn('You have chosen to seed training. '
+train_transform:  Compose(
+    Compose(
+    ResizeImage(size=(256, 256))
+    RandomResizedCrop(size=(224, 224), scale=(0.08, 1.0), ratio=(0.75, 1.3333), interpolation=PIL.Image.BILINEAR)
+)
+    RandomHorizontalFlip(p=0.5)
+    ToTensor()
+    Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+)
+val_transform:  Compose(
+    Compose(
+    ResizeImage(size=(256, 256))
+    CenterCrop(size=(224, 224))
+)
+    ToTensor()
+    Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+)
+=> using model 'resnet50'
+--------------------------
+Start of epoch [0/20]
+lr: 0.001
+--------------------------
+Epoch: [0][   0/1000]	Time  2.17 ( 2.17)	Data  0.01 ( 0.01)	Loss   3.65 (  3.65)	Cls Acc 3.1 (3.1)	Domain Acc 43.8 (43.8)
+Epoch: [0][ 100/1000]	Time  0.36 ( 0.40)	Data  0.11 ( 0.12)	Loss   0.64 (  1.19)	Cls Acc 81.2 (69.7)	Domain Acc 59.4 (54.4)
+Epoch: [0][ 200/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.41 (  0.82)	Cls Acc 90.6 (79.0)	Domain Acc 53.1 (55.2)
+Epoch: [0][ 300/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.25 (  0.66)	Cls Acc 93.8 (82.8)	Domain Acc 53.1 (55.3)
+Epoch: [0][ 400/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.19 (  0.57)	Cls Acc 93.8 (85.3)	Domain Acc 53.1 (55.2)
+Epoch: [0][ 500/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.08 (  0.50)	Cls Acc 96.9 (86.8)	Domain Acc 56.2 (55.1)
+Epoch: [0][ 600/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.12 (  0.45)	Cls Acc 93.8 (88.2)	Domain Acc 50.0 (55.0)
+Epoch: [0][ 700/1000]	Time  0.63 ( 0.39)	Data  0.36 ( 0.13)	Loss   0.09 (  0.41)	Cls Acc 96.9 (89.2)	Domain Acc 56.2 (55.0)
+Epoch: [0][ 800/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.11 (  0.38)	Cls Acc 96.9 (90.1)	Domain Acc 56.2 (54.9)
+Epoch: [0][ 900/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.17 (  0.36)	Cls Acc 96.9 (90.7)	Domain Acc 56.2 (54.8)
+Test: [ 0/18]	Time  0.783 ( 0.783)	Loss 1.2484e-02 (1.2484e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 83.481
+--------------------------
+End of epoch [0/20]
+current top-1 acc on source_val= 83.5
+--------------------------
+--------------------------
+Start of epoch [1/20]
+lr: 0.0005946035575013606
+--------------------------
+Epoch: [1][   0/1000]	Time  0.28 ( 0.28)	Data  0.02 ( 0.02)	Loss   0.18 (  0.18)	Cls Acc 93.8 (93.8)	Domain Acc 54.7 (54.7)
+Epoch: [1][ 100/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.18 (  0.15)	Cls Acc 96.9 (95.8)	Domain Acc 50.0 (53.4)
+Epoch: [1][ 200/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.18 (  0.14)	Cls Acc 100.0 (96.2)	Domain Acc 56.2 (53.7)
+Epoch: [1][ 300/1000]	Time  0.51 ( 0.39)	Data  0.25 ( 0.13)	Loss   0.07 (  0.14)	Cls Acc 100.0 (96.4)	Domain Acc 59.4 (54.0)
+Epoch: [1][ 400/1000]	Time  0.61 ( 0.39)	Data  0.34 ( 0.13)	Loss   0.09 (  0.14)	Cls Acc 100.0 (96.4)	Domain Acc 53.1 (54.0)
+Epoch: [1][ 500/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.09 (  0.13)	Cls Acc 96.9 (96.6)	Domain Acc 57.8 (54.0)
+Epoch: [1][ 600/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.14 (  0.13)	Cls Acc 96.9 (96.6)	Domain Acc 50.0 (54.1)
+Epoch: [1][ 700/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.04 (  0.12)	Cls Acc 100.0 (96.8)	Domain Acc 57.8 (54.2)
+Epoch: [1][ 800/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.02 (  0.12)	Cls Acc 100.0 (96.9)	Domain Acc 54.7 (54.2)
+Epoch: [1][ 900/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.29 (  0.12)	Cls Acc 93.8 (96.9)	Domain Acc 53.1 (54.2)
+Test: [ 0/18]	Time  0.241 ( 0.241)	Loss 6.0757e-03 (6.0757e-03)	Acc@1 100.00 (100.00)
+ * Acc@1 86.679
+--------------------------
+End of epoch [1/20]
+current top-1 acc on source_val= 86.7
+--------------------------
+--------------------------
+Start of epoch [2/20]
+lr: 0.00043869133765083086
+--------------------------
+Epoch: [2][   0/1000]	Time  0.28 ( 0.28)	Data  0.01 ( 0.01)	Loss   0.18 (  0.18)	Cls Acc 96.9 (96.9)	Domain Acc 53.1 (53.1)
+Epoch: [2][ 100/1000]	Time  0.62 ( 0.39)	Data  0.36 ( 0.13)	Loss   0.22 (  0.12)	Cls Acc 93.8 (96.8)	Domain Acc 56.2 (54.1)
+Epoch: [2][ 200/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.11)	Cls Acc 100.0 (97.2)	Domain Acc 54.7 (54.1)
+Epoch: [2][ 300/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.02 (  0.10)	Cls Acc 100.0 (97.3)	Domain Acc 50.0 (54.0)
+Epoch: [2][ 400/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.02 (  0.10)	Cls Acc 100.0 (97.5)	Domain Acc 57.8 (54.0)
+Epoch: [2][ 500/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.10 (  0.09)	Cls Acc 96.9 (97.5)	Domain Acc 48.4 (54.1)
+Epoch: [2][ 600/1000]	Time  0.52 ( 0.39)	Data  0.26 ( 0.13)	Loss   0.12 (  0.09)	Cls Acc 93.8 (97.5)	Domain Acc 59.4 (54.1)
+Epoch: [2][ 700/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.03 (  0.09)	Cls Acc 100.0 (97.5)	Domain Acc 53.1 (54.1)
+Epoch: [2][ 800/1000]	Time  0.63 ( 0.39)	Data  0.35 ( 0.13)	Loss   0.14 (  0.09)	Cls Acc 96.9 (97.5)	Domain Acc 57.8 (54.3)
+Epoch: [2][ 900/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.16 (  0.09)	Cls Acc 93.8 (97.6)	Domain Acc 51.6 (54.4)
+Test: [ 0/18]	Time  0.237 ( 0.237)	Loss 5.3024e-03 (5.3024e-03)	Acc@1 100.00 (100.00)
+ * Acc@1 86.856
+--------------------------
+End of epoch [2/20]
+current top-1 acc on source_val= 86.9
+--------------------------
+--------------------------
+Start of epoch [3/20]
+lr: 0.0003535533905932738
+--------------------------
+Epoch: [3][   0/1000]	Time  0.27 ( 0.27)	Data  0.01 ( 0.01)	Loss   0.11 (  0.11)	Cls Acc 96.9 (96.9)	Domain Acc 54.7 (54.7)
+Epoch: [3][ 100/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.05 (  0.09)	Cls Acc 96.9 (97.8)	Domain Acc 54.7 (54.1)
+Epoch: [3][ 200/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.08)	Cls Acc 100.0 (97.8)	Domain Acc 54.7 (54.0)
+Epoch: [3][ 300/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.02 (  0.08)	Cls Acc 100.0 (97.8)	Domain Acc 53.1 (54.1)
+Epoch: [3][ 400/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.05 (  0.08)	Cls Acc 100.0 (97.9)	Domain Acc 60.9 (54.1)
+Epoch: [3][ 500/1000]	Time  0.63 ( 0.39)	Data  0.36 ( 0.13)	Loss   0.08 (  0.08)	Cls Acc 96.9 (97.9)	Domain Acc 57.8 (54.2)
+Epoch: [3][ 600/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.06 (  0.08)	Cls Acc 96.9 (97.9)	Domain Acc 51.6 (54.2)
+Epoch: [3][ 700/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.03 (  0.08)	Cls Acc 100.0 (97.9)	Domain Acc 54.7 (54.3)
+Epoch: [3][ 800/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.09 (  0.08)	Cls Acc 96.9 (97.9)	Domain Acc 57.8 (54.3)
+Epoch: [3][ 900/1000]	Time  0.51 ( 0.39)	Data  0.25 ( 0.13)	Loss   0.08 (  0.08)	Cls Acc 96.9 (97.9)	Domain Acc 53.1 (54.3)
+Test: [ 0/18]	Time  0.237 ( 0.237)	Loss 2.1236e-02 (2.1236e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 86.323
+--------------------------
+End of epoch [3/20]
+current top-1 acc on source_val= 86.3
+--------------------------
+--------------------------
+Start of epoch [4/20]
+lr: 0.0002990697562442441
+--------------------------
+Epoch: [4][   0/1000]	Time  0.28 ( 0.28)	Data  0.01 ( 0.01)	Loss   0.25 (  0.25)	Cls Acc 90.6 (90.6)	Domain Acc 48.4 (48.4)
+Epoch: [4][ 100/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.12 (  0.07)	Cls Acc 96.9 (98.3)	Domain Acc 56.2 (54.4)
+Epoch: [4][ 200/1000]	Time  0.63 ( 0.39)	Data  0.36 ( 0.13)	Loss   0.01 (  0.07)	Cls Acc 100.0 (98.3)	Domain Acc 56.2 (54.5)
+Epoch: [4][ 300/1000]	Time  0.39 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.00 (  0.07)	Cls Acc 100.0 (98.3)	Domain Acc 50.0 (54.5)
+Epoch: [4][ 400/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.06 (  0.07)	Cls Acc 96.9 (98.3)	Domain Acc 60.9 (54.5)
+Epoch: [4][ 500/1000]	Time  0.39 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.14 (  0.07)	Cls Acc 96.9 (98.2)	Domain Acc 54.7 (54.5)
+Epoch: [4][ 600/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.16 (  0.07)	Cls Acc 96.9 (98.3)	Domain Acc 56.2 (54.5)
+Epoch: [4][ 700/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.05 (  0.07)	Cls Acc 100.0 (98.2)	Domain Acc 50.0 (54.5)
+Epoch: [4][ 800/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.09 (  0.07)	Cls Acc 96.9 (98.3)	Domain Acc 59.4 (54.5)
+Epoch: [4][ 900/1000]	Time  0.62 ( 0.39)	Data  0.35 ( 0.13)	Loss   0.00 (  0.07)	Cls Acc 100.0 (98.3)	Domain Acc 50.0 (54.5)
+Test: [ 0/18]	Time  0.239 ( 0.239)	Loss 1.1412e-02 (1.1412e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 87.389
+--------------------------
+End of epoch [4/20]
+current top-1 acc on source_val= 87.4
+--------------------------
+--------------------------
+Start of epoch [5/20]
+lr: 0.00026084743001221456
+--------------------------
+Epoch: [5][   0/1000]	Time  0.28 ( 0.28)	Data  0.02 ( 0.02)	Loss   0.00 (  0.00)	Cls Acc 100.0 (100.0)	Domain Acc 53.1 (53.1)
+Epoch: [5][ 100/1000]	Time  0.39 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.08 (  0.06)	Cls Acc 96.9 (98.3)	Domain Acc 54.7 (54.2)
+Epoch: [5][ 200/1000]	Time  0.53 ( 0.39)	Data  0.26 ( 0.13)	Loss   0.03 (  0.06)	Cls Acc 100.0 (98.4)	Domain Acc 59.4 (54.2)
+Epoch: [5][ 300/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.17 (  0.06)	Cls Acc 96.9 (98.4)	Domain Acc 59.4 (54.2)
+Epoch: [5][ 400/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.06)	Cls Acc 100.0 (98.4)	Domain Acc 53.1 (54.3)
+Epoch: [5][ 500/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.06)	Cls Acc 100.0 (98.4)	Domain Acc 56.2 (54.3)
+Epoch: [5][ 600/1000]	Time  0.59 ( 0.39)	Data  0.32 ( 0.13)	Loss   0.00 (  0.06)	Cls Acc 100.0 (98.4)	Domain Acc 57.8 (54.3)
+Epoch: [5][ 700/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.02 (  0.06)	Cls Acc 100.0 (98.4)	Domain Acc 57.8 (54.3)
+Epoch: [5][ 800/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.03 (  0.06)	Cls Acc 100.0 (98.3)	Domain Acc 54.7 (54.4)
+Epoch: [5][ 900/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.04 (  0.06)	Cls Acc 100.0 (98.3)	Domain Acc 60.9 (54.3)
+Test: [ 0/18]	Time  0.242 ( 0.242)	Loss 9.3469e-03 (9.3469e-03)	Acc@1 100.00 (100.00)
+ * Acc@1 86.501
+--------------------------
+End of epoch [5/20]
+current top-1 acc on source_val= 86.5
+--------------------------
+--------------------------
+Start of epoch [6/20]
+lr: 0.00023236808024254085
+--------------------------
+Epoch: [6][   0/1000]	Time  0.28 ( 0.28)	Data  0.01 ( 0.01)	Loss   0.01 (  0.01)	Cls Acc 100.0 (100.0)	Domain Acc 57.8 (57.8)
+Epoch: [6][ 100/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.02 (  0.06)	Cls Acc 100.0 (98.4)	Domain Acc 50.0 (54.7)
+Epoch: [6][ 200/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.03 (  0.06)	Cls Acc 100.0 (98.4)	Domain Acc 54.7 (55.1)
+Epoch: [6][ 300/1000]	Time  0.62 ( 0.39)	Data  0.35 ( 0.13)	Loss   0.12 (  0.06)	Cls Acc 96.9 (98.5)	Domain Acc 57.8 (54.8)
+Epoch: [6][ 400/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.06)	Cls Acc 100.0 (98.4)	Domain Acc 51.6 (54.8)
+Epoch: [6][ 500/1000]	Time  0.51 ( 0.39)	Data  0.25 ( 0.13)	Loss   0.05 (  0.06)	Cls Acc 100.0 (98.4)	Domain Acc 50.0 (54.8)
+Epoch: [6][ 600/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.03 (  0.06)	Cls Acc 100.0 (98.4)	Domain Acc 60.9 (54.8)
+Epoch: [6][ 700/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.11 (  0.06)	Cls Acc 96.9 (98.4)	Domain Acc 46.9 (54.8)
+Epoch: [6][ 800/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.06 (  0.06)	Cls Acc 96.9 (98.4)	Domain Acc 53.1 (54.9)
+Epoch: [6][ 900/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.04 (  0.06)	Cls Acc 100.0 (98.5)	Domain Acc 51.6 (54.8)
+Test: [ 0/18]	Time  0.243 ( 0.243)	Loss 1.2442e-02 (1.2442e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 87.211
+--------------------------
+End of epoch [6/20]
+current top-1 acc on source_val= 87.2
+--------------------------
+--------------------------
+Start of epoch [7/20]
+lr: 0.00021022410381342865
+--------------------------
+Epoch: [7][   0/1000]	Time  0.62 ( 0.62)	Data  0.35 ( 0.35)	Loss   0.04 (  0.04)	Cls Acc 100.0 (100.0)	Domain Acc 60.9 (60.9)
+Epoch: [7][ 100/1000]	Time  0.39 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.03 (  0.06)	Cls Acc 100.0 (98.3)	Domain Acc 50.0 (55.0)
+Epoch: [7][ 200/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.06)	Cls Acc 100.0 (98.4)	Domain Acc 54.7 (55.0)
+Epoch: [7][ 300/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.20 (  0.06)	Cls Acc 93.8 (98.5)	Domain Acc 57.8 (54.9)
+Epoch: [7][ 400/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.06)	Cls Acc 100.0 (98.6)	Domain Acc 51.6 (54.9)
+Epoch: [7][ 500/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.00 (  0.05)	Cls Acc 100.0 (98.6)	Domain Acc 57.8 (54.9)
+Epoch: [7][ 600/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.02 (  0.05)	Cls Acc 100.0 (98.6)	Domain Acc 56.2 (54.9)
+Epoch: [7][ 700/1000]	Time  0.63 ( 0.39)	Data  0.37 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.7)	Domain Acc 51.6 (54.9)
+Epoch: [7][ 800/1000]	Time  0.53 ( 0.39)	Data  0.25 ( 0.13)	Loss   0.04 (  0.05)	Cls Acc 100.0 (98.6)	Domain Acc 56.2 (54.9)
+Epoch: [7][ 900/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.04 (  0.05)	Cls Acc 100.0 (98.6)	Domain Acc 50.0 (54.9)
+Test: [ 0/18]	Time  0.236 ( 0.236)	Loss 8.2846e-03 (8.2846e-03)	Acc@1 100.00 (100.00)
+ * Acc@1 86.856
+--------------------------
+End of epoch [7/20]
+current top-1 acc on source_val= 86.9
+--------------------------
+--------------------------
+Start of epoch [8/20]
+lr: 0.00019245008972987527
+--------------------------
+Epoch: [8][   0/1000]	Time  0.29 ( 0.29)	Data  0.02 ( 0.02)	Loss   0.01 (  0.01)	Cls Acc 100.0 (100.0)	Domain Acc 56.2 (56.2)
+Epoch: [8][ 100/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.03 (  0.05)	Cls Acc 100.0 (98.5)	Domain Acc 53.1 (55.0)
+Epoch: [8][ 200/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.02 (  0.05)	Cls Acc 100.0 (98.7)	Domain Acc 48.4 (54.9)
+Epoch: [8][ 300/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.11 (  0.05)	Cls Acc 96.9 (98.6)	Domain Acc 54.7 (55.0)
+Epoch: [8][ 400/1000]	Time  0.62 ( 0.39)	Data  0.35 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.6)	Domain Acc 57.8 (54.9)
+Epoch: [8][ 500/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.13 (  0.05)	Cls Acc 96.9 (98.6)	Domain Acc 54.7 (54.9)
+Epoch: [8][ 600/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.00 (  0.05)	Cls Acc 100.0 (98.6)	Domain Acc 53.1 (54.9)
+Epoch: [8][ 700/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.6)	Domain Acc 57.8 (54.8)
+Epoch: [8][ 800/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.6)	Domain Acc 54.7 (54.8)
+Epoch: [8][ 900/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.16 (  0.05)	Cls Acc 93.8 (98.7)	Domain Acc 57.8 (54.8)
+Test: [ 0/18]	Time  0.236 ( 0.236)	Loss 8.0250e-03 (8.0250e-03)	Acc@1 100.00 (100.00)
+ * Acc@1 86.856
+--------------------------
+End of epoch [8/20]
+current top-1 acc on source_val= 86.9
+--------------------------
+--------------------------
+Start of epoch [9/20]
+lr: 0.0001778279410038923
+--------------------------
+Epoch: [9][   0/1000]	Time  0.27 ( 0.27)	Data  0.01 ( 0.01)	Loss   0.06 (  0.06)	Cls Acc 96.9 (96.9)	Domain Acc 56.2 (56.2)
+Epoch: [9][ 100/1000]	Time  0.86 ( 0.39)	Data  0.60 ( 0.13)	Loss   0.02 (  0.05)	Cls Acc 100.0 (98.7)	Domain Acc 53.1 (54.6)
+Epoch: [9][ 200/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.02 (  0.04)	Cls Acc 100.0 (98.8)	Domain Acc 60.9 (55.2)
+Epoch: [9][ 300/1000]	Time  0.39 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.8)	Domain Acc 51.6 (54.9)
+Epoch: [9][ 400/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.00 (  0.04)	Cls Acc 100.0 (98.8)	Domain Acc 56.2 (54.8)
+Epoch: [9][ 500/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.00 (  0.04)	Cls Acc 100.0 (98.8)	Domain Acc 53.1 (54.7)
+Epoch: [9][ 600/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.05 (  0.05)	Cls Acc 96.9 (98.8)	Domain Acc 54.7 (54.7)
+Epoch: [9][ 700/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.11 (  0.05)	Cls Acc 96.9 (98.7)	Domain Acc 54.7 (54.7)
+Epoch: [9][ 800/1000]	Time  0.63 ( 0.39)	Data  0.35 ( 0.13)	Loss   0.00 (  0.05)	Cls Acc 100.0 (98.7)	Domain Acc 48.4 (54.7)
+Epoch: [9][ 900/1000]	Time  0.39 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.7)	Domain Acc 51.6 (54.6)
+Test: [ 0/18]	Time  0.239 ( 0.239)	Loss 1.1010e-02 (1.1010e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 86.679
+--------------------------
+End of epoch [9/20]
+current top-1 acc on source_val= 86.7
+--------------------------
+--------------------------
+Start of epoch [10/20]
+lr: 0.0001655600260761702
+--------------------------
+Epoch: [10][   0/1000]	Time  0.28 ( 0.28)	Data  0.01 ( 0.01)	Loss   0.05 (  0.05)	Cls Acc 100.0 (100.0)	Domain Acc 54.7 (54.7)
+Epoch: [10][ 100/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.7)	Domain Acc 57.8 (54.8)
+Epoch: [10][ 200/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.07 (  0.05)	Cls Acc 96.9 (98.7)	Domain Acc 51.6 (54.6)
+Epoch: [10][ 300/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.7)	Domain Acc 53.1 (54.6)
+Epoch: [10][ 400/1000]	Time  0.52 ( 0.39)	Data  0.26 ( 0.13)	Loss   0.11 (  0.05)	Cls Acc 96.9 (98.8)	Domain Acc 54.7 (54.7)
+Epoch: [10][ 500/1000]	Time  0.62 ( 0.39)	Data  0.34 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.8)	Domain Acc 53.1 (54.6)
+Epoch: [10][ 600/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.16 (  0.05)	Cls Acc 93.8 (98.9)	Domain Acc 48.4 (54.7)
+Epoch: [10][ 700/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.03 (  0.05)	Cls Acc 100.0 (98.9)	Domain Acc 53.1 (54.6)
+Epoch: [10][ 800/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.04 (  0.05)	Cls Acc 100.0 (98.9)	Domain Acc 53.1 (54.6)
+Epoch: [10][ 900/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.9)	Domain Acc 53.1 (54.6)
+Test: [ 0/18]	Time  0.243 ( 0.243)	Loss 9.8140e-03 (9.8140e-03)	Acc@1 100.00 (100.00)
+ * Acc@1 87.034
+--------------------------
+End of epoch [10/20]
+current top-1 acc on source_val= 87.0
+--------------------------
+--------------------------
+Start of epoch [11/20]
+lr: 0.00015510080985034995
+--------------------------
+Epoch: [11][   0/1000]	Time  0.28 ( 0.28)	Data  0.01 ( 0.01)	Loss   0.04 (  0.04)	Cls Acc 96.9 (96.9)	Domain Acc 62.5 (62.5)
+Epoch: [11][ 100/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.7)	Domain Acc 46.9 (55.2)
+Epoch: [11][ 200/1000]	Time  0.64 ( 0.39)	Data  0.36 ( 0.13)	Loss   0.02 (  0.05)	Cls Acc 100.0 (98.7)	Domain Acc 56.2 (55.2)
+Epoch: [11][ 300/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.00 (  0.05)	Cls Acc 100.0 (98.8)	Domain Acc 57.8 (55.2)
+Epoch: [11][ 400/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.05 (  0.05)	Cls Acc 96.9 (98.9)	Domain Acc 51.6 (55.1)
+Epoch: [11][ 500/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.00 (  0.05)	Cls Acc 100.0 (98.8)	Domain Acc 54.7 (55.1)
+Epoch: [11][ 600/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.03 (  0.05)	Cls Acc 100.0 (98.8)	Domain Acc 54.7 (55.2)
+Epoch: [11][ 700/1000]	Time  0.53 ( 0.39)	Data  0.26 ( 0.13)	Loss   0.03 (  0.05)	Cls Acc 100.0 (98.8)	Domain Acc 57.8 (55.2)
+Epoch: [11][ 800/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.05 (  0.05)	Cls Acc 96.9 (98.8)	Domain Acc 57.8 (55.2)
+Epoch: [11][ 900/1000]	Time  0.63 ( 0.39)	Data  0.36 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.8)	Domain Acc 57.8 (55.3)
+Test: [ 0/18]	Time  0.238 ( 0.238)	Loss 1.2718e-02 (1.2718e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 85.968
+--------------------------
+End of epoch [11/20]
+current top-1 acc on source_val= 86.0
+--------------------------
+--------------------------
+Start of epoch [12/20]
+lr: 0.00014606376323968786
+--------------------------
+Epoch: [12][   0/1000]	Time  0.29 ( 0.29)	Data  0.01 ( 0.01)	Loss   0.01 (  0.01)	Cls Acc 100.0 (100.0)	Domain Acc 54.7 (54.7)
+Epoch: [12][ 100/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (98.8)	Domain Acc 57.8 (55.0)
+Epoch: [12][ 200/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.00 (  0.05)	Cls Acc 100.0 (98.9)	Domain Acc 56.2 (55.1)
+Epoch: [12][ 300/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 54.7 (55.1)
+Epoch: [12][ 400/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.9)	Domain Acc 53.1 (55.2)
+Epoch: [12][ 500/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.9)	Domain Acc 54.7 (55.1)
+Epoch: [12][ 600/1000]	Time  0.63 ( 0.39)	Data  0.37 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.9)	Domain Acc 51.6 (55.1)
+Epoch: [12][ 700/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 60.9 (55.1)
+Epoch: [12][ 800/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.08 (  0.05)	Cls Acc 100.0 (98.9)	Domain Acc 56.2 (55.1)
+Epoch: [12][ 900/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.9)	Domain Acc 50.0 (55.1)
+Test: [ 0/18]	Time  0.243 ( 0.243)	Loss 1.4770e-02 (1.4770e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 85.968
+--------------------------
+End of epoch [12/20]
+current top-1 acc on source_val= 86.0
+--------------------------
+--------------------------
+Start of epoch [13/20]
+lr: 0.0001381668871619764
+--------------------------
+Epoch: [13][   0/1000]	Time  0.51 ( 0.51)	Data  0.25 ( 0.25)	Loss   0.01 (  0.01)	Cls Acc 100.0 (100.0)	Domain Acc 57.8 (57.8)
+Epoch: [13][ 100/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.16 (  0.05)	Cls Acc 96.9 (98.8)	Domain Acc 56.2 (55.3)
+Epoch: [13][ 200/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.8)	Domain Acc 53.1 (55.3)
+Epoch: [13][ 300/1000]	Time  0.63 ( 0.39)	Data  0.36 ( 0.13)	Loss   0.02 (  0.05)	Cls Acc 100.0 (98.9)	Domain Acc 56.2 (55.3)
+Epoch: [13][ 400/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.06 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 56.2 (55.3)
+Epoch: [13][ 500/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.9)	Domain Acc 59.4 (55.3)
+Epoch: [13][ 600/1000]	Time  0.39 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.11 (  0.04)	Cls Acc 96.9 (98.9)	Domain Acc 57.8 (55.4)
+Epoch: [13][ 700/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.06 (  0.05)	Cls Acc 96.9 (98.8)	Domain Acc 59.4 (55.3)
+Epoch: [13][ 800/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.8)	Domain Acc 56.2 (55.4)
+Epoch: [13][ 900/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.04 (  0.05)	Cls Acc 100.0 (98.8)	Domain Acc 56.2 (55.4)
+Test: [ 0/18]	Time  0.242 ( 0.242)	Loss 1.2728e-02 (1.2728e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 86.501
+--------------------------
+End of epoch [13/20]
+current top-1 acc on source_val= 86.5
+--------------------------
+--------------------------
+Start of epoch [14/20]
+lr: 0.00013119931141769537
+--------------------------
+Epoch: [14][   0/1000]	Time  0.64 ( 0.64)	Data  0.37 ( 0.37)	Loss   0.01 (  0.01)	Cls Acc 100.0 (100.0)	Domain Acc 54.7 (54.7)
+Epoch: [14][ 100/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 64.1 (55.7)
+Epoch: [14][ 200/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 51.6 (55.4)
+Epoch: [14][ 300/1000]	Time  0.51 ( 0.39)	Data  0.25 ( 0.13)	Loss   0.03 (  0.04)	Cls Acc 100.0 (98.8)	Domain Acc 56.2 (55.4)
+Epoch: [14][ 400/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 53.1 (55.4)
+Epoch: [14][ 500/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.11 (  0.04)	Cls Acc 96.9 (98.8)	Domain Acc 56.2 (55.5)
+Epoch: [14][ 600/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.00 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 53.1 (55.5)
+Epoch: [14][ 700/1000]	Time  0.62 ( 0.39)	Data  0.35 ( 0.13)	Loss   0.07 (  0.04)	Cls Acc 96.9 (98.8)	Domain Acc 57.8 (55.5)
+Epoch: [14][ 800/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.03 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 59.4 (55.5)
+Epoch: [14][ 900/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.05 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 54.7 (55.5)
+Test: [ 0/18]	Time  0.243 ( 0.243)	Loss 1.1676e-02 (1.1676e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 85.968
+--------------------------
+End of epoch [14/20]
+current top-1 acc on source_val= 86.0
+--------------------------
+--------------------------
+Start of epoch [15/20]
+lr: 0.000125
+--------------------------
+Epoch: [15][   0/1000]	Time  0.27 ( 0.27)	Data  0.01 ( 0.01)	Loss   0.01 (  0.01)	Cls Acc 100.0 (100.0)	Domain Acc 51.6 (51.6)
+Epoch: [15][ 100/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 54.7 (55.6)
+Epoch: [15][ 200/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.02 (  0.05)	Cls Acc 100.0 (98.6)	Domain Acc 60.9 (55.3)
+Epoch: [15][ 300/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.07 (  0.05)	Cls Acc 100.0 (98.7)	Domain Acc 57.8 (55.4)
+Epoch: [15][ 400/1000]	Time  0.63 ( 0.39)	Data  0.36 ( 0.13)	Loss   0.00 (  0.04)	Cls Acc 100.0 (98.8)	Domain Acc 57.8 (55.5)
+Epoch: [15][ 500/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.04 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 56.2 (55.5)
+Epoch: [15][ 600/1000]	Time  0.53 ( 0.39)	Data  0.26 ( 0.13)	Loss   0.00 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 56.2 (55.5)
+Epoch: [15][ 700/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.00 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 50.0 (55.5)
+Epoch: [15][ 800/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 57.8 (55.5)
+Epoch: [15][ 900/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.06 (  0.04)	Cls Acc 96.9 (98.9)	Domain Acc 56.2 (55.5)
+Test: [ 0/18]	Time  0.236 ( 0.236)	Loss 1.3544e-02 (1.3544e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 85.968
+--------------------------
+End of epoch [15/20]
+current top-1 acc on source_val= 86.0
+--------------------------
+--------------------------
+Start of epoch [16/20]
+lr: 0.00011944371675699593
+--------------------------
+Epoch: [16][   0/1000]	Time  0.27 ( 0.27)	Data  0.01 ( 0.01)	Loss   0.12 (  0.12)	Cls Acc 96.9 (96.9)	Domain Acc 53.1 (53.1)
+Epoch: [16][ 100/1000]	Time  0.63 ( 0.39)	Data  0.36 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (99.2)	Domain Acc 56.2 (55.3)
+Epoch: [16][ 200/1000]	Time  0.39 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 56.2 (55.4)
+Epoch: [16][ 300/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.07 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 53.1 (55.5)
+Epoch: [16][ 400/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.04 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 51.6 (55.4)
+Epoch: [16][ 500/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 56.2 (55.4)
+Epoch: [16][ 600/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.04 (  0.04)	Cls Acc 96.9 (99.0)	Domain Acc 53.1 (55.4)
+Epoch: [16][ 700/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 56.2 (55.5)
+Epoch: [16][ 800/1000]	Time  0.65 ( 0.39)	Data  0.39 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 57.8 (55.5)
+Epoch: [16][ 900/1000]	Time  0.52 ( 0.39)	Data  0.26 ( 0.13)	Loss   0.00 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 60.9 (55.5)
+Test: [ 0/18]	Time  0.242 ( 0.242)	Loss 1.1433e-02 (1.1433e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 85.790
+--------------------------
+End of epoch [16/20]
+current top-1 acc on source_val= 85.8
+--------------------------
+--------------------------
+Start of epoch [17/20]
+lr: 0.00011443150799483988
+--------------------------
+Epoch: [17][   0/1000]	Time  0.27 ( 0.27)	Data  0.01 ( 0.01)	Loss   0.17 (  0.17)	Cls Acc 96.9 (96.9)	Domain Acc 54.7 (54.7)
+Epoch: [17][ 100/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 54.7 (55.4)
+Epoch: [17][ 200/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.24 (  0.05)	Cls Acc 93.8 (98.8)	Domain Acc 51.6 (55.5)
+Epoch: [17][ 300/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.9)	Domain Acc 56.2 (55.5)
+Epoch: [17][ 400/1000]	Time  0.36 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.05 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 54.7 (55.6)
+Epoch: [17][ 500/1000]	Time  0.63 ( 0.39)	Data  0.37 ( 0.13)	Loss   0.10 (  0.04)	Cls Acc 96.9 (98.9)	Domain Acc 59.4 (55.6)
+Epoch: [17][ 600/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.05 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 56.2 (55.6)
+Epoch: [17][ 700/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.03 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 53.1 (55.7)
+Epoch: [17][ 800/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 60.9 (55.8)
+Epoch: [17][ 900/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.12 (  0.04)	Cls Acc 96.9 (98.9)	Domain Acc 57.8 (55.7)
+Test: [ 0/18]	Time  0.238 ( 0.238)	Loss 1.2720e-02 (1.2720e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 86.323
+--------------------------
+End of epoch [17/20]
+current top-1 acc on source_val= 86.3
+--------------------------
+--------------------------
+Start of epoch [18/20]
+lr: 0.00010988408578578126
+--------------------------
+Epoch: [18][   0/1000]	Time  0.27 ( 0.27)	Data  0.01 ( 0.01)	Loss   0.12 (  0.12)	Cls Acc 96.9 (96.9)	Domain Acc 51.6 (51.6)
+Epoch: [18][ 100/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.05)	Cls Acc 100.0 (98.8)	Domain Acc 57.8 (55.6)
+Epoch: [18][ 200/1000]	Time  0.87 ( 0.39)	Data  0.60 ( 0.13)	Loss   0.02 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 51.6 (55.9)
+Epoch: [18][ 300/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.03 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 54.7 (56.0)
+Epoch: [18][ 400/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.02 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 56.2 (55.9)
+Epoch: [18][ 500/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.06 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 54.7 (55.9)
+Epoch: [18][ 600/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.10 (  0.04)	Cls Acc 96.9 (98.9)	Domain Acc 59.4 (55.9)
+Epoch: [18][ 700/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 54.7 (55.8)
+Epoch: [18][ 800/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 57.8 (55.8)
+Epoch: [18][ 900/1000]	Time  0.63 ( 0.39)	Data  0.36 ( 0.13)	Loss   0.00 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 56.2 (55.8)
+Test: [ 0/18]	Time  0.243 ( 0.243)	Loss 9.7205e-03 (9.7205e-03)	Acc@1 100.00 (100.00)
+ * Acc@1 86.679
+--------------------------
+End of epoch [18/20]
+current top-1 acc on source_val= 86.7
+--------------------------
+--------------------------
+Start of epoch [19/20]
+lr: 0.00010573712634405643
+--------------------------
+Epoch: [19][   0/1000]	Time  0.27 ( 0.27)	Data  0.01 ( 0.01)	Loss   0.03 (  0.03)	Cls Acc 100.0 (100.0)	Domain Acc 56.2 (56.2)
+Epoch: [19][ 100/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.00 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 53.1 (55.5)
+Epoch: [19][ 200/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.07 (  0.04)	Cls Acc 96.9 (98.9)	Domain Acc 53.1 (55.5)
+Epoch: [19][ 300/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.00 (  0.04)	Cls Acc 100.0 (98.9)	Domain Acc 54.7 (55.4)
+Epoch: [19][ 400/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.14 (  0.04)	Cls Acc 96.9 (98.9)	Domain Acc 56.2 (55.6)
+Epoch: [19][ 500/1000]	Time  0.52 ( 0.39)	Data  0.26 ( 0.13)	Loss   0.00 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 56.2 (55.6)
+Epoch: [19][ 600/1000]	Time  0.59 ( 0.39)	Data  0.32 ( 0.13)	Loss   0.00 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 56.2 (55.6)
+Epoch: [19][ 700/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.01 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 59.4 (55.6)
+Epoch: [19][ 800/1000]	Time  0.38 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.03 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 60.9 (55.6)
+Epoch: [19][ 900/1000]	Time  0.37 ( 0.39)	Data  0.11 ( 0.13)	Loss   0.07 (  0.04)	Cls Acc 100.0 (99.0)	Domain Acc 57.8 (55.6)
+Test: [ 0/18]	Time  0.239 ( 0.239)	Loss 1.1926e-02 (1.1926e-02)	Acc@1 100.00 (100.00)
+ * Acc@1 86.501
+--------------------------
+End of epoch [19/20]
+current top-1 acc on source_val= 86.5
+--------------------------
+--------------------------
+End of the training
+Best top-1 acc on source_val= 87.4
+--------------------------
