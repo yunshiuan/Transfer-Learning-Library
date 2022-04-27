@@ -411,6 +411,8 @@ if __name__ == '__main__':
     VERSION = "v4"
     # PHASE = 'train'
     PHASE = 'test'
+    # - the weight for the adversarial loss
+    TRADEOFF = 0. # 1.
     
 
     DOMAIN_SOURCE_TRAIN = "A_train"
@@ -473,7 +475,7 @@ if __name__ == '__main__':
                         help='no pool layer after the feature extractor.')
     parser.add_argument('--scratch', action='store_true',
                         help='whether train from scratch (use the pretrained otherwise).')
-    parser.add_argument('--trade-off', default=1., type=float,
+    parser.add_argument('--trade-off', default=TRADEOFF, type=float,
                         help='the trade-off hyper-parameter for transfer loss (the relative weight of the domain adversarial loss with respect to the classification loss')
     # training parameters
     parser.add_argument('-b', '--batch-size', default=32, type=int,
