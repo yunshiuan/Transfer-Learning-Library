@@ -409,8 +409,8 @@ if __name__ == '__main__':
     # - par
     DATASET = "Office31_v2"
     VERSION = "v4"
-    PHASE = 'train'
-    # PHASE = 'test'
+    # PHASE = 'train'
+    PHASE = 'test'
     # - the weight for the adversarial loss
     TRADEOFF = 0. # 1.
     
