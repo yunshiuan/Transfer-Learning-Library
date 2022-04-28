@@ -77,22 +77,27 @@ class Office31_v2(ImageList):
                'mobile_phone', 'monitor', 'mouse', 'mug', 'paper_notebook', 'pen', 'phone', 'printer', 'projector',
                'punchers', 'ring_binder', 'ruler', 'scissors', 'speaker', 'stapler', 'tape_dispenser', 'trash_can']
 
-    PATH_IMAGES_INPUT = "data/office31"
-    PATH_IMAGES_OUTPUT = "data/office31_v2"
+    PATH_IMAGES_INPUT = "office31"
+    PATH_IMAGES_OUTPUT = "office31_v2"
 
     def __init__(self, root: str, task: str, download: Optional[bool] = True, **kwargs):
         assert task in self.IMAGE_LIST_OUTPUT
-        data_list_file = os.path.join(root, self.IMAGE_LIST_OUTPUT[task])
         # check and prepare the files
-        self._process(root)
+        # self.root = root
+        self.PATH_IMAGES_INPUT = os.path.join(root, self.PATH_IMAGES_INPUT)
+        self.PATH_IMAGES_OUTPUT = os.path.join(root, self.PATH_IMAGES_OUTPUT)
+        data_list_file = os.path.join(
+            self.PATH_IMAGES_OUTPUT, self.IMAGE_LIST_OUTPUT[task])
+        self._process()
 
-        super(Office31_v2, self).__init__(root, Office31_v2.CLASSES,
+        super(Office31_v2, self).__init__(self.PATH_IMAGES_OUTPUT, Office31_v2.CLASSES,
                                           data_list_file=data_list_file, **kwargs)
 
-    def _process(self, root):
+    def _process(self):
         # check if the image files exist
         for domain in self.DOMAINS:
-            path_domain = os.path.join(self.PATH_IMAGES_INPUT, domain)
+            path_domain = os.path.join(
+                self.PATH_IMAGES_INPUT, domain)
             # raise an error if the image files not yet exists
             if not os.path.isdir(path_domain):
                 raise Exception(
@@ -101,7 +106,7 @@ class Office31_v2(ImageList):
         # check if the image list txts exist
         for file in self.IMAGE_LIST_OUTPUT.values():
             # geneate the image list txts if not yet exist
-            if not os.path.isfile(os.path.join(root, file)):
+            if not os.path.isfile(os.path.join(self.PATH_IMAGES_OUTPUT, file)):
                 self._generate_image_list()
 
     def _generate_image_list(self):

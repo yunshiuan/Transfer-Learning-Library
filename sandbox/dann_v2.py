@@ -20,7 +20,8 @@ from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
 
-# sys.path.insert(0, "..")
+sys.path.insert(0, ".")
+sys.path.insert(0, "..")
 
 import utils
 from tllib.modules.domain_discriminator import DomainDiscriminator
@@ -409,10 +410,10 @@ if __name__ == '__main__':
     # - par
     DATASET = "Office31_v2"
     VERSION = "v4"
-    # PHASE = 'train'
-    PHASE = 'test'
+    PHASE = 'train'
+    # PHASE = 'test'
     # - the weight for the adversarial loss
-    TRADEOFF = 0. # 1.
+    TRADEOFF = 1. # 1.
     
 
     DOMAIN_SOURCE_TRAIN = "A_train"
@@ -421,7 +422,7 @@ if __name__ == '__main__':
 
     DOMAIN_TARGET_TRAIN = "W_train"
     DOMAIN_TARGET_VAL = "W_val"
-    DOMAIN_target_test = "W_test"
+    DOMAIN_TARGET_TEST = "W_test"
 
     NUM_EPOCHS = 20  # 20
     SEED = 1
@@ -430,7 +431,7 @@ if __name__ == '__main__':
 
     # - path
     PATH_ROOT = '/home/sean/CS769/project/Transfer-Learning-Library'
-    PATH_DATA = osp.join(PATH_ROOT, 'data', DATASET.lower())
+    PATH_DATA = osp.join(PATH_ROOT, 'data')
     PATH_LOG = osp.join(PATH_ROOT, 'sandbox', 'logs', 'dann', DATASET, VERSION)
 
     parser = argparse.ArgumentParser(
@@ -452,7 +453,7 @@ if __name__ == '__main__':
     parser.add_argument('-s_test', '--source_test', help='source domain(s) test set',
                         nargs='+', default=DOMAIN_SOURCE_TEST)
     parser.add_argument('-t_test', '--target_test', help='target domain(s) test set',
-                        nargs='+', default=DOMAIN_target_test)
+                        nargs='+', default=DOMAIN_TARGET_TEST)
     parser.add_argument('--train-resizing', type=str, default='default')
     parser.add_argument('--val-resizing', type=str, default='default')
     parser.add_argument('--resize-size', type=int, default=224,
