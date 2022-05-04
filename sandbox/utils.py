@@ -2,13 +2,16 @@
 @author: Junguang Jiang, Baixu Chen
 @contact: JiangJunguang1123@outlook.com, cbx_99_hasta@outlook.com
 """
+# add the directory of the repo to allow importing 'tllib'
+import sys
+sys.path.append('.')  # for interactive shell mode
+sys.path.append('..')  # console mode
 from tllib.vision.datasets.imagelist import MultipleDomainsDataset
 from tllib.utils.meter import AverageMeter, ProgressMeter
 from tllib.utils.metric import accuracy, ConfusionMatrix
 from tllib.vision.transforms import ResizeImage
 import tllib.vision.models as models
 import tllib.vision.datasets as datasets
-import sys
 import os.path as osp
 import time
 
@@ -18,9 +21,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.transforms as T
 
-# add the directory of the repo to allow importing 'tllib'
-sys.path.append('.')  # for interactive shell mode
-sys.path.append('..')  # console mode
 
 
 def get_model_names():

@@ -2,27 +2,22 @@
 @author: Junguang Jiang
 @contact: JiangJunguang1123@outlook.com
 """
-import random
-import time
-from tkinter import ARC
-import warnings
-import sys
-import argparse
-import shutil
-import os
-import os.path as osp
-
-import torch
-import torch.nn as nn
-import torch.backends.cudnn as cudnn
-from torch.optim import SGD
-from torch.optim.lr_scheduler import LambdaLR
-from torch.utils.data import DataLoader
+import wandb
 import torch.nn.functional as F
-
-sys.path.insert(0, ".")
-sys.path.insert(0, "..")
-
+from torch.utils.data import DataLoader
+from torch.optim.lr_scheduler import LambdaLR
+from torch.optim import SGD
+import torch.backends.cudnn as cudnn
+import torch.nn as nn
+import torch
+import os.path as osp
+import os
+import shutil
+import argparse
+import warnings
+from tkinter import ARC
+import time
+import random
 import utils
 from tllib.modules.domain_discriminator import DomainDiscriminator
 from tllib.alignment.dann import DomainAdversarialLoss, ImageClassifier
@@ -31,6 +26,10 @@ from tllib.utils.metric import accuracy
 from tllib.utils.meter import AverageMeter, ProgressMeter
 from tllib.utils.logger import CompleteLogger
 from tllib.utils.analysis import collect_feature, tsne, a_distance
+import sys
+sys.path.insert(0, ".")
+sys.path.insert(0, "..")
+sys.path.insert(0, "scripts/lib")
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -171,8 +170,15 @@ def main(args: argparse.Namespace):
     # - args.bottleneck_dim = 256
     # issubclass(ImageClassifier, nn.Module) -> True
     # isinstance(classifier, nn.Module) -> True
-    classifier = ImageClassifier(backbone, num_classes, bottleneck_dim=args.bottleneck_dim,
+    classifier = ImageClassifier(backbone, num_classes,
+                                 bottleneck_dim=args.bottleneck_dim,
                                  pool_layer=pool_layer, finetune=not args.scratch).to(device)
+    # batch = next(source_train_iter)
+    # x=batch[0]
+    # x=x.to(device)
+    # y1=backbone(x)
+    # y2=classifier(x)
+
     domain_discri = DomainDiscriminator(
         in_feature=classifier.features_dim, hidden_size=1024).to(device)
 
@@ -244,6 +250,27 @@ def main(args: argparse.Namespace):
     # ------------------
     # start training
     # ------------------
+    if USE_WB:
+        wandb_config = {
+            "seed": args.seed,
+            "trade_off": args.trade_off,
+            "version": args.version,
+            "epochs": args.epochs,
+            "batch_size": args.batch_size,
+            "iters_per_epoch": args.iters_per_epoch,
+            "dataset": DATASET,
+            "lr_start": args.lr,
+            "lr_decay": args.lr_decay,
+            "lr_gamma": args.lr_gamma,
+            "momentum": args.momentum,
+            "weight_decay": args.weight_decay,
+            "workers": args.workers,
+            "classifier": str(classifier),
+            "domain_adv": str(domain_adv)
+        }
+        wandb.init(project="transfer-demo", config=wandb_config)
+        wandb.run.name = '{}'.format(args.version)
+        wandb.run.save()
     best_acc1 = 0.
     for epoch in range(args.epochs):
         # ------------------
@@ -254,7 +281,11 @@ def main(args: argparse.Namespace):
         print("Start of epoch [{}/{}]".format(epoch, args.epochs))
         print("lr:", lr_scheduler.get_last_lr()[0])
         print("--------------------------")
-
+        if USE_WB:
+            wandb.log(
+                {
+                    "lr_epoch": lr_scheduler.get_last_lr()[0]
+                })
         # ------------------
         # train for one epoch (for each epoch, train for `iters-per-epoch` iterations)
         # ------------------
@@ -282,7 +313,11 @@ def main(args: argparse.Namespace):
         print("End of epoch [{}/{}]".format(epoch, args.epochs))
         print("current top-1 acc on source_val= {:3.1f}".format(acc1))
         print("--------------------------")
-
+        if USE_WB:
+            wandb.log(
+                {
+                    "epoch_top1_source_val": acc1,
+                })
     print("--------------------------")
     print("End of the training")
     print("Best top-1 acc on source_val= {:3.1f}".format(best_acc1))
@@ -299,11 +334,15 @@ def train(source_train_iter: ForeverDataIterator, target_train_iter: ForeverData
     batch_time = AverageMeter('Time', ':5.2f')
     data_time = AverageMeter('Data', ':5.2f')
     losses = AverageMeter('Loss', ':6.2f')
+    losses_cls = AverageMeter('Loss_cls', ':6.2f')
+    losses_domain = AverageMeter('Loss_domain', ':6.2f')
     cls_accs = AverageMeter('Cls Acc', ':3.1f')
     domain_accs = AverageMeter('Domain Acc', ':3.1f')
     progress = ProgressMeter(
         args.iters_per_epoch,
-        [batch_time, data_time, losses, cls_accs, domain_accs],
+        [batch_time, data_time,
+         losses, losses_cls, losses_domain,
+         cls_accs, domain_accs],
         prefix="Epoch: [{}]".format(epoch))
 
     # switch to train mode
@@ -379,6 +418,8 @@ def train(source_train_iter: ForeverDataIterator, target_train_iter: ForeverData
         # - for domain accuracy, the closer it's to the 'random rate', the better it is
         # ------------------
         losses.update(loss.item(), x_s.size(0))
+        losses_cls.update(cls_loss.item(), x_s.size(0))
+        losses_domain.update(transfer_loss.item(), x_s.size(0))
         cls_accs.update(cls_acc.item(), x_s.size(0))
         domain_accs.update(domain_acc.item(), x_s.size(0))
 
@@ -402,6 +443,16 @@ def train(source_train_iter: ForeverDataIterator, target_train_iter: ForeverData
         # ------------------
         if i % args.print_freq == 0:
             progress.display(i)
+            if USE_WB:
+                wandb.log(
+                    {
+                        "lr_iter": lr_scheduler.get_last_lr()[0],
+                        "loss": losses.avg,
+                        "loss_cls": losses_cls.avg,
+                        "loss_domain": losses_domain.avg,
+                        "acc_cls": cls_accs.avg,
+                        "acc_domain": domain_accs.avg
+                    })
 
 
 if __name__ == '__main__':
@@ -409,12 +460,11 @@ if __name__ == '__main__':
     # - CUDA_VISIBLE_DEVICES=0 python dann.py data/office31 -d Office31 -s A -t W -a resnet50 --epochs 20 --seed 1 --log logs/dann/Office31_A2W
     # - par
     DATASET = "Office31_v2"
-    VERSION = "v4"
+    VERSION = "v6"
     PHASE = 'train'
     # PHASE = 'test'
     # - the weight for the adversarial loss
-    TRADEOFF = 1. # 1.
-    
+    TRADEOFF = 0.  # 1.
 
     DOMAIN_SOURCE_TRAIN = "A_train"
     DOMAIN_SOURCE_VAL = "A_val"
@@ -428,6 +478,7 @@ if __name__ == '__main__':
     SEED = 1
     ARCH = "resnet50"
     ITERS_PER_EPOCH = 1000  # 1000
+    USE_WB = True
 
     # - path
     PATH_ROOT = '/home/sean/CS769/project/Transfer-Learning-Library'

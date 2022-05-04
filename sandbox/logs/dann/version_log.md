@@ -56,3 +56,33 @@ v4
   Top-1 accuracy on target_test_loader: 55.97484283927102  
   - summary
     - turning off the adversarial loss DOES harm the cross-domain accuracy
+
+v5
+- note
+  - same as v3 except that using wandb to record the process
+  - dataset: `office31_v2`
+  - evaluate the model both on the test sets of the source and the target domain 
+  - train:
+    - source train =  `amazon_train` (x+y)
+    - target train = `webcam_train` (x)
+  - validation: (choose the best model)
+    - source val =  `amazon_val` (x+y)    
+  - test:
+    - source test =  `amazon_test` (x+y)
+    - target test =  `webcam_test`  (x+y)    
+  - metric
+v6
+- note
+  - same as v4 except that using wandb to record the process 
+  - dataset: `office31_v2`
+  - based on v3 but turn off the adversarial loss 
+    - only train the model using the supervised loss in the source domain
+    - this can serve as a baseline model
+  - train:
+    - source train =  `amazon_train` (x+y)
+    - target train = `webcam_train` (x)
+  - validation: (choose the best model)
+    - source val =  `amazon_val` (x+y)    
+  - test:
+    - source test =  `amazon_test` (x+y)
+    - target test =  `webcam_test`  (x+y)     

@@ -145,3 +145,4 @@ examples/domain_adaptation/digits/data/*
 # sandbox/data/office31/
 
 *.DS_Store
+wandb
