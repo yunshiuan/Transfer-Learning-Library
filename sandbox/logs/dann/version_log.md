@@ -86,3 +86,5 @@ v6
   - test:
     - source test =  `amazon_test` (x+y)
     - target test =  `webcam_test`  (x+y)     
+  - summary
+    - see: https://wandb.ai/yunshiuan/transfer-demo?workspace=user-yunshiuan
