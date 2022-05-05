@@ -271,7 +271,7 @@ def main(args: argparse.Namespace):
         wandb.init(project="transfer-demo", config=wandb_config)
         wandb.run.name = '{}'.format(args.version)
         wandb.run.save()
-    best_acc1 = 0.
+    best_acc1_source_val = 0.
     for epoch in range(args.epochs):
         # ------------------
         # the learning rate at the start of this epoch
@@ -300,27 +300,34 @@ def main(args: argparse.Namespace):
         # - the validation top-1 accuracy on label prediction
         # -- val_loader: the DataLoader for the val set
         # -- classifier: the main classifier with the label predictor at the end
-        acc1 = utils.validate(source_val_loader, classifier, args, device)
+        acc1_source_val = utils.validate(
+            source_val_loader, classifier, args, device)
 
         # remember best acc@1 (through all epochs) and save checkpoint
         torch.save(classifier.state_dict(),
                    logger.get_checkpoint_path('latest'))
-        if acc1 > best_acc1:
+        if acc1_source_val > best_acc1_source_val:
             shutil.copy(logger.get_checkpoint_path('latest'),
                         logger.get_checkpoint_path('best'))
-        best_acc1 = max(acc1, best_acc1)
+        best_acc1_source_val = max(acc1_source_val, best_acc1_source_val)
+        acc1_target_val = utils.validate(
+            target_val_loader, classifier, args, device)
         print("--------------------------")
         print("End of epoch [{}/{}]".format(epoch, args.epochs))
-        print("current top-1 acc on source_val= {:3.1f}".format(acc1))
+        print(
+            "current top-1 acc on source_val= {:3.1f}".format(acc1_source_val))
+        print(
+            "current top-1 acc on target_val= {:3.1f}".format(acc1_target_val))
         print("--------------------------")
         if USE_WB:
             wandb.log(
                 {
-                    "epoch_top1_source_val": acc1,
+                    "epoch_top1_source_val": acc1_source_val,
+                    "epoch_top1_target_val": acc1_target_val
                 })
     print("--------------------------")
     print("End of the training")
-    print("Best top-1 acc on source_val= {:3.1f}".format(best_acc1))
+    print("Best top-1 acc on source_val= {:3.1f}".format(best_acc1_source_val))
     print("--------------------------")
     logger.close()
 
